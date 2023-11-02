@@ -1,6 +1,6 @@
 
 
-# `Group 14` - ELEC_5619 Object Oriented Application Frameworks 
+# ELEC5020 ELEC5021 Capstone Project A Capstone Project B
 
  `Flicker` - a translation messaging webapp.
 
