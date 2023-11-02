@@ -152,7 +152,7 @@ public class MessageService {
                 message.setDeleted(true);
                 Message savedMessage = messageRepository.save(message);
 
-               notificationService.sendNotificationToTopic(conversation, savedMessage);
+                notificationService.sendNotificationToTopic(conversation, savedMessage);
 
                 return savedMessage;
             }
@@ -269,7 +269,7 @@ public class MessageService {
         Set<MessageDTO> messageSet = messages.stream()
                 .filter(m -> {
                     if(m.getContent() != null)
-                        return m.getContent().toLowerCase().contains(query.toLowerCase());
+                        return m.getContent().toLowerCase().contains(query.toLowerCase()) && m.getDeleted() != true;
                     else
                         return false;})
                 .collect(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(MessageDTO::getCreatedAt).reversed())));
