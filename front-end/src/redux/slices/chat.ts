@@ -379,10 +379,10 @@ const chatSlice = createSlice({
 
 const getConversationsAsyncAction = createAsyncThunk(
   "Chat/GetConversations",
-  async (data: { messageApi: MessageInstance }, thunkAPI) => {
+  async (data: { messageApi: MessageInstance, page?: number; size?: number }, thunkAPI) => {
     try {
       thunkAPI.dispatch(setState({ loadingConversation: true }));
-      const response: any = await getConversations();
+      const response: any = await getConversations(data.page, data.size);
       const conversations = response.content as Conversation[];
       await Promise.all(
         conversations.map(async (c) => {

@@ -101,3 +101,11 @@ export const updateNotification = async (notification: boolean) => {
     throw e;
   }
 };
+
+export const updatePassword = async (oldPassword: string, newPassword: string) => {
+  try {
+    return await axiosCaller(`/user/password/update`, "POST", { oldPassword, newPassword });
+  } catch (e) {
+    throw e;
+  }
+};

@@ -1,8 +1,8 @@
 import React, { useContext, useMemo, useState } from "react";
-import { Dropdown, MenuProps } from "antd";
+import {Dropdown, MenuProps, Modal} from "antd";
 import { AppDispatch, RootState } from "@/redux/store";
 import { Language } from "@/redux/slices/language";
-import { TranslationOutlined, DeleteOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import {TranslationOutlined, DeleteOutlined, InfoCircleOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
 import { connect } from "react-redux";
 import { Conversation, Message, translateAsyncAction } from "@/redux/slices/chat";
 import { MessageInstance } from "antd/es/message/interface";
@@ -25,6 +25,7 @@ type Props = {
 const messageContextMenu = ({ children, language, isSelfMessage, message, user, conversation, messageApi, disabled, dispatch }: Props) => {
   const client = useContext(ClientContext);
   const [open, setOpen] = useState(false);
+  const [modal, modalContextHolder] = Modal.useModal();
 
   const items: MenuProps["items"] = useMemo(() => {
     if (isSelfMessage) {
@@ -69,13 +70,46 @@ const messageContextMenu = ({ children, language, isSelfMessage, message, user, 
     }
   }, [language, isSelfMessage]);
 
+
+  const confirm = () => {
+    modal.confirm({
+      title: "Confirm",
+      icon: <ExclamationCircleOutlined />,
+      content: `Are you sure to remove this message?`,
+      okText: "Yes",
+      cancelText: "No",
+      onOk: () => {
+        if (client && client.connected) {
+          client.publish({
+            destination: `/app/delete/${conversation.id}/${user.id}/${message.id}`,
+          });
+        }
+      },
+    });
+  };
+
+
   const handleMenuClick: MenuProps["onClick"] = (info) => {
     if (info.key === "delete") {
-      if (client && client.connected) {
+      modal.confirm({
+        title: "Confirm",
+        icon: <ExclamationCircleOutlined />,
+        content: `Are you sure to remove this message?`,
+        okText: "Yes",
+        cancelText: "No",
+        onOk: () => {
+          if (client && client.connected) {
+            client.publish({
+              destination: `/app/delete/${conversation.id}/${user.id}/${message.id}`,
+            });
+          }
+        },
+      });
+      /*if (client && client.connected) {
         client.publish({
           destination: `/app/delete/${conversation.id}/${user.id}/${message.id}`,
         });
-      }
+      }*/
     } else if (info.key === "info") {
       setOpen(true);
     } else {

@@ -25,6 +25,9 @@ import {
 import { ConfigProvider, Skeleton, Switch, message } from "antd";
 import UpdateAvatarModal from "./updateAvatarModal";
 import UpdateCoverModal from "./updateCoverModal";
+import ChangePasswordModal from "./changePasswordModal";
+import CreateGroupModal from "@/app/contact/createGroupModal";
+import {setState} from "@/redux/slices/signup";
 
 type Props = {
   languages: Language[];
@@ -46,6 +49,8 @@ const page = ({ languages, user, dispatch }: Props) => {
 
   const [openUpdateAvatar, setOpenUpdateAvatar] = useState(false);
   const [openUpdateCover, setOpenUpdateCover] = useState(false);
+
+  const [openUpdatePassword, setOpenUpdatePassword] = useState(false);
 
   useEffect(() => {
     if (user.language === null) setLanguageIndex(0);
@@ -71,6 +76,11 @@ const page = ({ languages, user, dispatch }: Props) => {
           open={openUpdateCover}
           onCancel={() => setOpenUpdateCover(false)}
           messageApi={messageApi}
+        />
+        <ChangePasswordModal
+            open={openUpdatePassword}
+            onCancel={() => setOpenUpdatePassword(false)}
+            messageApi={messageApi}
         />
         <div className="h-1/5 relative mb-[100px]">
           <button
@@ -461,6 +471,51 @@ const page = ({ languages, user, dispatch }: Props) => {
                 </button>
               </div>
 
+
+              <div className="flex flex-row justify-between">
+                <div className="flex justify-center items-center gap-4">
+                  <svg
+                      width="30"
+                      height="30"
+                      viewBox="0 0 30 30"
+                      xmlns="http://www.w3.org/2000/svg"
+                  >
+
+                    <path
+                        d="M26.865 20.265H20.07C19.6722 20.265 19.2906 20.423 19.0093 20.7043C18.728 20.9856 18.57 21.3672 18.57 21.765C18.57 22.1628 18.728 22.5444 19.0093 22.8257C19.2906 23.107 19.6722 23.265 20.07 23.265H23.67C22.0154 24.9941 19.8816 26.189 17.5427 26.6961C15.2039 27.2032 12.7668 26.9994 10.5447 26.1109C8.32252 25.2223 6.4168 23.6897 5.07239 21.7098C3.72797 19.7299 3.00626 17.3932 3 15C3 14.6022 2.84196 14.2206 2.56066 13.9393C2.27936 13.658 1.89782 13.5 1.5 13.5C1.10218 13.5 0.720644 13.658 0.43934 13.9393C0.158035 14.2206 0 14.6022 0 15C0.00792999 17.9292 0.873331 20.792 2.48941 23.235C4.10548 25.6781 6.4015 27.5945 9.09411 28.7478C11.7867 29.9011 14.7581 30.2408 17.6415 29.725C20.525 29.2091 23.1943 27.8603 25.32 25.845V28.5C25.32 28.8978 25.478 29.2794 25.7593 29.5607C26.0406 29.842 26.4222 30 26.82 30C27.2178 30 27.5994 29.842 27.8807 29.5607C28.162 29.2794 28.32 28.8978 28.32 28.5V21.75C28.3163 21.3625 28.1627 20.9914 27.8915 20.7145C27.6203 20.4377 27.2524 20.2766 26.865 20.265ZM15 0C11.1546 0.0109683 7.46024 1.49837 4.68 4.155V1.5C4.68 1.10218 4.52197 0.720644 4.24066 0.43934C3.95936 0.158035 3.57782 0 3.18 0C2.78218 0 2.40064 0.158035 2.11934 0.43934C1.83804 0.720644 1.68 1.10218 1.68 1.5V8.25C1.68 8.64782 1.83804 9.02936 2.11934 9.31066C2.40064 9.59196 2.78218 9.75 3.18 9.75H9.93C10.3278 9.75 10.7094 9.59196 10.9907 9.31066C11.272 9.02936 11.43 8.64782 11.43 8.25C11.43 7.85218 11.272 7.47064 10.9907 7.18934C10.7094 6.90804 10.3278 6.75 9.93 6.75H6.33C7.9837 5.02181 10.1161 3.82725 12.4536 3.31966C14.7911 2.81207 17.2269 3.01462 19.4484 3.90129C21.6699 4.78797 23.5758 6.31832 24.9213 8.29591C26.2669 10.2735 26.9908 12.6081 27 15C27 15.3978 27.158 15.7794 27.4393 16.0607C27.7206 16.342 28.1022 16.5 28.5 16.5C28.8978 16.5 29.2794 16.342 29.5607 16.0607C29.842 15.7794 30 15.3978 30 15C30 13.0302 29.612 11.0796 28.8582 9.25975C28.1044 7.43986 26.9995 5.78628 25.6066 4.3934C24.2137 3.00052 22.5601 1.89563 20.7403 1.14181C18.9204 0.387987 16.9698 0 15 0Z"
+                        fill="#435334"
+                    />
+
+                    <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <g id="lock,pad lock,safe,security,protected,padlock, / 24 / Outline">
+                      <path
+                          id="Vector"
+                          d="M10.5 12.4583C10.2336 12.4549 9.97265 12.541 9.75226 12.7049C9.53187 12.8688 9.36263 13.1028 9.26731 13.3753C9.17199 13.6477 9.15518 13.9456 9.21913 14.2289C9.28308 14.5122 9.42473 14.7672 9.625 14.9596V16.2917C9.625 16.5458 9.71719 16.7896 9.88128 16.9693C10.0454 17.149 10.2679 17.25 10.5 17.25C10.7321 17.25 10.9546 17.149 11.1187 16.9693C11.2828 16.7896 11.375 16.5458 11.375 16.2917V14.9596C11.5753 14.7672 11.7169 14.5122 11.7809 14.2289C11.8448 13.9456 11.828 13.6477 11.7327 13.3753C11.6374 13.1028 11.4681 12.8688 11.2477 12.7049C11.0273 12.541 10.7664 12.4549 10.5 12.4583ZM14.875 8.62499V6.70832C14.875 5.43749 14.4141 4.21872 13.5936 3.3201C12.7731 2.42149 11.6603 1.91666 10.5 1.91666C9.33968 1.91666 8.22688 2.42149 7.40641 3.3201C6.58594 4.21872 6.125 5.43749 6.125 6.70832V8.62499C5.42881 8.62499 4.76113 8.92789 4.26884 9.46706C3.77656 10.0062 3.5 10.7375 3.5 11.5V18.2083C3.5 18.9708 3.77656 19.7021 4.26884 20.2413C4.76113 20.7804 5.42881 21.0833 6.125 21.0833H14.875C15.5712 21.0833 16.2389 20.7804 16.7312 20.2413C17.2234 19.7021 17.5 18.9708 17.5 18.2083V11.5C17.5 10.7375 17.2234 10.0062 16.7312 9.46706C16.2389 8.92789 15.5712 8.62499 14.875 8.62499ZM7.875 6.70832C7.875 5.94583 8.15156 5.21456 8.64384 4.67539C9.13613 4.13622 9.80381 3.83332 10.5 3.83332C11.1962 3.83332 11.8639 4.13622 12.3562 4.67539C12.8484 5.21456 13.125 5.94583 13.125 6.70832V8.62499H7.875V6.70832ZM15.75 18.2083C15.75 18.4625 15.6578 18.7062 15.4937 18.886C15.3296 19.0657 15.1071 19.1667 14.875 19.1667H6.125C5.89294 19.1667 5.67038 19.0657 5.50628 18.886C5.34219 18.7062 5.25 18.4625 5.25 18.2083V11.5C5.25 11.2458 5.34219 11.0021 5.50628 10.8223C5.67038 10.6426 5.89294 10.5417 6.125 10.5417H14.875C15.1071 10.5417 15.3296 10.6426 15.4937 10.8223C15.6578 11.0021 15.75 11.2458 15.75 11.5V18.2083Z"
+                          fill="#435334"
+                          transform="translate(4,3)"
+                      />
+                      </g>
+                    </svg>
+                  </svg>
+
+                  <p className="text-2xl font-normal"> Change password </p>
+                </div>
+                <button className="bg-main w-10 h-10 flex justify-center items-center rounded-md  text-white duration-500 hover:bg-gray-200 hover:text-main active:scale-90 disabled:bg-transparent" onClick={() => setOpenUpdatePassword(true)}>
+                  <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                  >
+                    <path d="M12 2C8.13 2 5 5.13 5 9v3H3c-1.1 0-2 .9-2 2v6c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2v-6c0-1.1-.9-2-2-2h-2V9c0-3.87-3.13-7-7-7zm1 14h-2v-3h2v3zm-1-8c-1.65 0-3 1.35-3 3v3h6v-3c0-1.65-1.35-3-3-3z"
+                          fill="#FBFBFB"
+                    />
+
+                  </svg>
+                </button>
+              </div>
+
               <div className="flex">
                 <div className="flex-1 w-full h-px bg-gray-400"></div>
               </div>
@@ -491,10 +546,10 @@ const page = ({ languages, user, dispatch }: Props) => {
             </div>
 
             <button
-              onClick={() => {
-                dispatch(logoutAsyncAction(router));
-              }}
-              className="flex justify-center bg-red-500 p-3 text-white rounded-xl text-2xl font-bold duration-500 hover:bg-red-700 hover:text-black active:scale-90 "
+                onClick={() => {
+                  dispatch(logoutAsyncAction(router));
+                }}
+                className="flex justify-center bg-red-500 p-3 text-white rounded-xl text-2xl font-bold duration-500 hover:bg-red-700 hover:text-black active:scale-90 mt-4"
             >
               Logout
             </button>
