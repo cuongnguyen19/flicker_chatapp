@@ -1,7 +1,9 @@
 package com.capstone.project.flicker.ChatApp.controller;
 
+import com.capstone.project.flicker.ChatApp.model.payload.OpenAITranslationRequest;
 import com.capstone.project.flicker.ChatApp.model.payload.TranslationRequest;
 import com.capstone.project.flicker.ChatApp.service.TranslationService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.cloud.translate.Language;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +21,9 @@ public class TranslationController {
     private TranslationService translationService;
 
     @PostMapping
-    public ResponseEntity<String> translateText(@RequestBody TranslationRequest request) {
-        String translatedText = translationService.translate(request.getText(), request.getTargetLanguage());
+    public ResponseEntity<String> translateText(@RequestBody TranslationRequest request) throws JsonProcessingException {
+        //String translatedText = translationService.translate(request.getText(), request.getTargetLanguage());
+        String translatedText = translationService.generateText(request);
         return ResponseEntity.ok(translatedText);
     }
 

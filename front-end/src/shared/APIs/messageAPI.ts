@@ -16,6 +16,14 @@ export const deleteMessage = async (conversationId: number, messageId: number) =
   }
 };
 
+export const hideMessage = async (conversationId: number, messageId: number) => {
+  try {
+    return await axiosCaller(`/message/hide/${conversationId}/${messageId}`, "PUT");
+  } catch (e) {
+    throw e;
+  }
+};
+
 export const markMessageAsSeen = async (conversationId: number) => {
   try {
     return await axiosCaller(`/message/mark/seen/${conversationId}`, "PUT");

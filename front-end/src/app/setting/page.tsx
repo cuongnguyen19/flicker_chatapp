@@ -500,7 +500,8 @@ const page = ({ languages, user, dispatch }: Props) => {
 
                   <p className="text-2xl font-normal"> Change password </p>
                 </div>
-                <button className="bg-main w-10 h-10 flex justify-center items-center rounded-md  text-white duration-500 hover:bg-gray-200 hover:text-main active:scale-90 disabled:bg-transparent" onClick={() => setOpenUpdatePassword(true)}>
+                <button className="bg-main w-10 h-10 flex justify-center items-center rounded-md  text-white duration-500 hover:bg-gray-200 hover:text-main active:scale-90 disabled:bg-transparent"
+                        onClick={() => setOpenUpdatePassword(true)}>
                   <svg
                       xmlns="http://www.w3.org/2000/svg"
                       width="20"

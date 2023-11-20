@@ -2,13 +2,14 @@ import React, { useContext, useMemo, useState } from "react";
 import {Dropdown, MenuProps, Modal} from "antd";
 import { AppDispatch, RootState } from "@/redux/store";
 import { Language } from "@/redux/slices/language";
-import {TranslationOutlined, DeleteOutlined, InfoCircleOutlined, ExclamationCircleOutlined} from "@ant-design/icons";
+import {TranslationOutlined, DeleteOutlined, InfoCircleOutlined, ExclamationCircleOutlined, EyeInvisibleOutlined} from "@ant-design/icons";
 import { connect } from "react-redux";
 import { Conversation, Message, translateAsyncAction } from "@/redux/slices/chat";
 import { MessageInstance } from "antd/es/message/interface";
 import { ClientContext } from "../layout";
 import { User } from "@/redux/slices/user";
 import MessageInformationModal from "./messageInformationModal";
+import {hideMessageAsyncAction} from "@/redux/slices/chat";
 
 type Props = {
   children: React.ReactNode;
@@ -46,6 +47,14 @@ const messageContextMenu = ({ children, language, isSelfMessage, message, user, 
           ),
           key: "delete",
         },
+        {
+          label: (
+              <span className="text-gray-500">
+              <EyeInvisibleOutlined /> Hide
+            </span>
+          ),
+          key: "hide",
+        },
       ];
     } else {
       return [
@@ -66,6 +75,14 @@ const messageContextMenu = ({ children, language, isSelfMessage, message, user, 
           key: "translate",
           children: language.length > 0 ? language.filter((l, i) => i > 0).map((l, i) => ({ key: i + 1, label: l.name + " (" + l.code + ")" })) : undefined,
         },
+        {
+          label: (
+              <span className="text-gray-500">
+              <EyeInvisibleOutlined /> Hide
+            </span>
+          ),
+          key: "hide",
+        },
       ];
     }
   }, [language, isSelfMessage]);
@@ -73,17 +90,23 @@ const messageContextMenu = ({ children, language, isSelfMessage, message, user, 
 
   const confirm = () => {
     modal.confirm({
-      title: "Confirm",
+      title: 'Are you sure you want to delete this message?',
       icon: <ExclamationCircleOutlined />,
-      content: `Are you sure to remove this message?`,
-      okText: "Yes",
-      cancelText: "No",
-      onOk: () => {
+      content: 'This action cannot be undone.',
+      okText: 'Yes',
+      okType: 'danger',
+      cancelText: 'No',
+      onOk() {
+        // Perform the delete action
         if (client && client.connected) {
+          console.log("Deleted message")
           client.publish({
             destination: `/app/delete/${conversation.id}/${user.id}/${message.id}`,
           });
         }
+      },
+      onCancel() {
+        console.log('Cancel delete');
       },
     });
   };
@@ -91,20 +114,7 @@ const messageContextMenu = ({ children, language, isSelfMessage, message, user, 
 
   const handleMenuClick: MenuProps["onClick"] = (info) => {
     if (info.key === "delete") {
-      modal.confirm({
-        title: "Confirm",
-        icon: <ExclamationCircleOutlined />,
-        content: `Are you sure to remove this message?`,
-        okText: "Yes",
-        cancelText: "No",
-        onOk: () => {
-          if (client && client.connected) {
-            client.publish({
-              destination: `/app/delete/${conversation.id}/${user.id}/${message.id}`,
-            });
-          }
-        },
-      });
+      confirm();
       /*if (client && client.connected) {
         client.publish({
           destination: `/app/delete/${conversation.id}/${user.id}/${message.id}`,
@@ -112,6 +122,8 @@ const messageContextMenu = ({ children, language, isSelfMessage, message, user, 
       }*/
     } else if (info.key === "info") {
       setOpen(true);
+    } else if (info.key === "hide") {
+      dispatch(hideMessageAsyncAction({ messageApi, conversationId: conversation.id, messageId: message.id }));
     } else {
       dispatch(
         translateAsyncAction({

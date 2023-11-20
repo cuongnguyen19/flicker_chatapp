@@ -13,16 +13,16 @@ import javax.validation.constraints.NotNull;
 public class OpenAITranslationRequest {
     @NotNull
     @NotBlank
-    @Schema(name = "A valid message text", required = true)
+    @Schema(name = "A valid model", required = true)
     private String model;
 
     @NotNull
     @NotBlank
-    @Schema(name = "A valid message text", required = true)
+    @Schema(name = "A valid prompt", required = true)
     private String prompt;
 
     @NotNull
     @NotBlank
-    @Schema(name = "A valid target language", required = true)
+    @Schema(name = "A valid token", required = true)
     private Integer max_tokens;
 }

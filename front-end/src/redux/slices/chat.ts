@@ -12,10 +12,12 @@ import {
   searchConversations,
   setConversationNotification,
 } from "@/shared/APIs/conversationAPI";
-import { getMessages, markMessageAsSeen } from "@/shared/APIs/messageAPI";
+import {getMessages, hideMessage, markMessageAsSeen} from "@/shared/APIs/messageAPI";
 import { transcribe, translate } from "@/shared/APIs/languageAPI";
 import { RootState } from "../store";
 import { NavigateOptions } from "next/dist/shared/lib/app-router-context";
+import {unFriend} from "@/shared/APIs/contactAPI";
+import {removeFriend} from "@/redux/slices/contact";
 
 export interface File {
   id: number;
@@ -155,8 +157,8 @@ const chatSlice = createSlice({
     deleteMessage: (
       state,
       action: PayloadAction<{
-        message: Message;
         conversationId: number;
+        messageId: number;
       }>
     ) => {
       const conversation = state.conversations.find((c) => c.id === action.payload.conversationId);
@@ -322,6 +324,21 @@ const chatSlice = createSlice({
         state.conversations[index].avatar = conversation.avatar;
       }
     },
+
+    concealMessage: (
+        state,
+        action: PayloadAction<{
+          conversationId: number;
+          messageId: number;
+        }>
+    ) => {
+      const conversation = state.conversations.find((c) => c.id === action.payload.conversationId);
+      if (conversation) {
+        conversation.message.messages = conversation.message.messages.filter((m) => m.id !== action.payload.messageId);
+        state.currentId = null;
+      }
+    },
+
   },
   extraReducers: (builder) => {
     builder.addCase(getMessagesAsyncAction.fulfilled, (state, action) => {
@@ -686,6 +703,20 @@ const markMessageAsSeenAsyncAction = createAsyncThunk(
   }
 );
 
+
+
+const hideMessageAsyncAction = createAsyncThunk(
+    "Contact/UnFriend",
+    async (data: { messageApi: MessageInstance; conversationId: number; messageId: number }, thunkAPI) => {
+      try {
+        await hideMessage(data.conversationId, data.messageId);
+        thunkAPI.dispatch(concealMessage({conversationId: data.conversationId, messageId: data.messageId }));
+      } catch (e: any) {
+        data.messageApi.error(e.message);
+      }
+    }
+);
+
 export {
   getConversationsAsyncAction,
   searchConversationsAsyncAction,
@@ -696,6 +727,7 @@ export {
   transcribeAsyncAction,
   markMessageAsSeenAsyncAction,
   addConversationAsyncAction,
+  hideMessageAsyncAction,
 };
 
 export const {
@@ -716,5 +748,6 @@ export const {
   changeConversationName,
   changeConversationAvatar,
   changeConversationNotification,
+  concealMessage,
 } = chatSlice.actions;
 export default chatSlice.reducer;

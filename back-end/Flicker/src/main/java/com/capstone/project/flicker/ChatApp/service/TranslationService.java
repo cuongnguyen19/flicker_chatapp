@@ -1,7 +1,9 @@
 package com.capstone.project.flicker.ChatApp.service;
 
 import com.capstone.project.flicker.ChatApp.model.payload.OpenAITranslationRequest;
+import com.capstone.project.flicker.ChatApp.model.payload.TranslationRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.translate.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -79,7 +81,12 @@ public class TranslationService {
     }
 
 
-    public String generateText(OpenAITranslationRequest request) throws JsonProcessingException {
+    public String generateText(TranslationRequest translationRequest) throws JsonProcessingException {
+        OpenAITranslationRequest request = new OpenAITranslationRequest();
+        request.setModel("gpt-3.5-turbo-instruct");
+        request.setMax_tokens(1000);
+        request.setPrompt("Translate the following text to " + translationRequest.getTargetLanguage() + ": '" + translationRequest.getText() + "'");
+
         // Headers
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -88,7 +95,6 @@ public class TranslationService {
         // Body
         ObjectMapper objectMapper = new ObjectMapper();
         String body = objectMapper.writeValueAsString(request);
-
 
         // Request entity
         HttpEntity<String> requestEntity = new HttpEntity<>(body, headers);
@@ -100,6 +106,18 @@ public class TranslationService {
         // Extract & return the generated text from the API response based on JSON structure
         // ...
 
-        return response.getBody(); // Simplified, process the JSON as per your requirement
+        String result = response.getBody(); // Simplified, process the JSON as per your requirement
+
+        // Parse the JSON string into a JsonNode
+        JsonNode jsonNode = objectMapper.readTree(result);
+
+        // Access JSON properties
+        JsonNode choicesArray = jsonNode.get("choices");
+        String text = "";
+        // Iterate through the choices
+        for (JsonNode choice : choicesArray) {
+            text += choice.get("text").asText().replace("\n", "");;
+        }
+        return text;
     }
 }
