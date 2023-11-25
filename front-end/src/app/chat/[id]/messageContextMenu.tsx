@@ -9,6 +9,9 @@ import { MessageInstance } from "antd/es/message/interface";
 import { ClientContext } from "../layout";
 import { User } from "@/redux/slices/user";
 import MessageInformationModal from "./messageInformationModal";
+import ConfirmDeleteMessageModal from "./confirmDeleteMessageModal";
+import ConfirmHideMessageModal from "./confirmHideMessageModal";
+
 import {hideMessageAsyncAction} from "@/redux/slices/chat";
 
 type Props = {
@@ -26,7 +29,8 @@ type Props = {
 const messageContextMenu = ({ children, language, isSelfMessage, message, user, conversation, messageApi, disabled, dispatch }: Props) => {
   const client = useContext(ClientContext);
   const [open, setOpen] = useState(false);
-  const [modal, modalContextHolder] = Modal.useModal();
+  const [openHide, setOpenHide] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
 
   const items: MenuProps["items"] = useMemo(() => {
     if (isSelfMessage) {
@@ -87,34 +91,9 @@ const messageContextMenu = ({ children, language, isSelfMessage, message, user, 
     }
   }, [language, isSelfMessage]);
 
-
-  const confirm = () => {
-    modal.confirm({
-      title: 'Are you sure you want to delete this message?',
-      icon: <ExclamationCircleOutlined />,
-      content: 'This action cannot be undone.',
-      okText: 'Yes',
-      okType: 'danger',
-      cancelText: 'No',
-      onOk() {
-        // Perform the delete action
-        if (client && client.connected) {
-          console.log("Deleted message")
-          client.publish({
-            destination: `/app/delete/${conversation.id}/${user.id}/${message.id}`,
-          });
-        }
-      },
-      onCancel() {
-        console.log('Cancel delete');
-      },
-    });
-  };
-
-
   const handleMenuClick: MenuProps["onClick"] = (info) => {
     if (info.key === "delete") {
-      confirm();
+      setOpenDelete(true);
       /*if (client && client.connected) {
         client.publish({
           destination: `/app/delete/${conversation.id}/${user.id}/${message.id}`,
@@ -123,7 +102,8 @@ const messageContextMenu = ({ children, language, isSelfMessage, message, user, 
     } else if (info.key === "info") {
       setOpen(true);
     } else if (info.key === "hide") {
-      dispatch(hideMessageAsyncAction({ messageApi, conversationId: conversation.id, messageId: message.id }));
+      setOpenHide(true);
+      //dispatch(hideMessageAsyncAction({ messageApi, conversationId: conversation.id, messageId: message.id }));
     } else {
       dispatch(
         translateAsyncAction({
@@ -140,6 +120,8 @@ const messageContextMenu = ({ children, language, isSelfMessage, message, user, 
   return (
     <>
       <MessageInformationModal open={open} onCancel={() => setOpen(false)} conversationId={conversation.id} message={message} messageApi={messageApi} />
+      <ConfirmDeleteMessageModal open={openDelete} onCancel={() => setOpenDelete(false)} conversation={conversation} message={message} messageApi={messageApi} />
+      <ConfirmHideMessageModal open={openHide} onCancel={() => setOpenHide(false)} conversation={conversation} message={message} messageApi={messageApi} dispatch={dispatch} />
       <Dropdown menu={{ items, onClick: handleMenuClick }} trigger={["contextMenu"]} disabled={disabled}>
         {children}
       </Dropdown>

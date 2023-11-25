@@ -1,6 +1,8 @@
 import { User } from "@/redux/slices/user";
 import { AppDispatch, RootState } from "@/redux/store";
-import { updatePassword } from "@/shared/APIs/userAPI";
+import {
+    resetHiddenConversationPassword
+} from "@/shared/APIs/userAPI";
 import { Button, Checkbox, ConfigProvider, Form, Input, Modal } from "antd";
 import { useForm } from "antd/es/form/Form";
 import { MessageInstance } from "antd/es/message/interface";
@@ -16,25 +18,25 @@ type Props = {
 };
 
 type FieldType = {
-    oldPassword: string;
-    newPassword: string;
-    retypeNewPassword: string;
+    accountPassword: string;
+    newHiddenConversationPassword: string;
+    retypeNewHiddenConversationPassword: string;
 };
 
-const changePasswordModal = ({ open, onCancel, messageApi }: Props) => {
+const resetHiddenConversationPasswordModal = ({ open, onCancel, messageApi }: Props) => {
     const [loading, setLoading] = useState(false);
     const [form] = useForm<FieldType>();
 
     const onFinish = async (values: FieldType) => {
         try {
             setLoading(true);
-            const response = await updatePassword(values.oldPassword, values.newPassword);
+            const response = await resetHiddenConversationPassword(values.accountPassword, values.newHiddenConversationPassword);
             onCancel();
             form.resetFields();
-            messageApi.success("Update password successfully");
+            messageApi.success("Reset hidden conversation password successfully");
         } catch (e: any) {
             if(e.response?.status === 417) {
-                messageApi.error("Wrong current password");
+                messageApi.error("Wrong current account password");
                 form.resetFields();
             }
             else {
@@ -66,7 +68,7 @@ const changePasswordModal = ({ open, onCancel, messageApi }: Props) => {
                 footer={null}
                 width={600}
             >
-                <div className="text-2xl pb-8 text-center text-main">Change password</div>
+                <div className="text-2xl pb-8 text-center text-main">Reset hidden conversation password</div>
                 <Form
                     form={form}
                     name="group"
@@ -78,28 +80,28 @@ const changePasswordModal = ({ open, onCancel, messageApi }: Props) => {
                     requiredMark={false}
                 >
                     <Form.Item<FieldType>
-                        label="Current Password"
-                        name="oldPassword"
-                        rules={[{ required: true, message: "Please input your current password" }]}
+                        label="Current Account Password"
+                        name="accountPassword"
+                        rules={[{ required: true, message: "Please input your current account password" }]}
                     >
-                        <Input placeholder="Type your current password" type="password"/>
+                        <Input placeholder="Type your current account password" type="password"/>
                     </Form.Item>
 
                     <Form.Item<FieldType>
-                        label="New Password"
-                        name="newPassword"
-                        rules={[{ required: true, message: "Please input your new password" }]}
+                        label="New Hidden Conversation Password"
+                        name="newHiddenConversationPassword"
+                        rules={[{ required: true, message: "Please input your new password used for hidden conversation" }]}
                     >
-                        <Input placeholder="Type your new password" type="password"/>
+                        <Input placeholder="Type your new password used for hidden conversation" type="password"/>
                     </Form.Item>
 
                     <Form.Item<FieldType>
-                        label="Retype New Password"
-                        name="retypeNewPassword"
-                        rules={[{ required: true, message: "Please retype your new password" },
+                        label="Retype New Hidden Conversation Password"
+                        name="retypeNewHiddenConversationPassword"
+                        rules={[{ required: true, message: "Please retype your new password used for hidden conversation" },
                             ({ getFieldValue }) => ({
                                 validator(_, value) {
-                                    if (!value || getFieldValue('newPassword') === value) {
+                                    if (!value || getFieldValue('newHiddenConversationPassword') === value) {
                                         return Promise.resolve();
                                     }
                                     return Promise.reject(new Error('The retyped new password does not match!'));
@@ -107,7 +109,7 @@ const changePasswordModal = ({ open, onCancel, messageApi }: Props) => {
                             })
                         ]}
                     >
-                        <Input placeholder="Retype your new password" type="password"/>
+                        <Input placeholder="Retype your new password used for hidden conversation" type="password"/>
                     </Form.Item>
 
                     <Form.Item className="mt-8">
@@ -130,4 +132,4 @@ const mapState = ({ user }: RootState) => ({
     user: user,
 });
 
-export default connect(mapState)(changePasswordModal);
+export default connect(mapState)(resetHiddenConversationPasswordModal);

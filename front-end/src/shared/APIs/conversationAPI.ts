@@ -144,3 +144,27 @@ export const setConversationNotification = async (
     throw e;
   }
 };
+
+export const hideConversation = async (conversationId: number, password: string) => {
+  try {
+    return await axiosCaller(`/conversation/hide/${conversationId}`, "POST", {password});
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const unhideConversation = async (conversationId: number, password: string) => {
+  try {
+    return await axiosCaller(`/conversation/unhide/${conversationId}`, "DELETE", {password});
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const checkHiddenConversation = async (conversationId: number) => {
+  try {
+    return await axiosCaller(`/conversation/checkHidden/${conversationId}`, "GET");
+  } catch (e) {
+    throw e;
+  }
+};

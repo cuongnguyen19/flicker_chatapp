@@ -12,7 +12,9 @@ import com.capstone.project.flicker.ChatApp.util.DataStructuresHandle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -42,6 +44,8 @@ public class ConversationService {
     private NotificationService notificationService;
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     private DataStructuresHandle handle = new DataStructuresHandle();
 
     public Conversation findConversationById(Long conversationId) {
@@ -94,6 +98,16 @@ public class ConversationService {
         return conversationRepository.findHiddenConversationsForUser(userId);
     }
 
+    public Boolean checkHiddenConversation(Long userId, Long conversationId) {
+        User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        Set<Conversation> conversations = conversationRepository.findHiddenConversationsForUser(userId);
+        for(Conversation conversation: conversations) {
+            if(conversation.getId() == conversationId)
+                return true;
+        }
+        return false;
+    }
+
     public Page<Conversation> getPagesOfConversations(Set<Conversation> conversations, Pageable pageable) {
         return handle.setToPage(conversations, pageable);
     }
@@ -108,6 +122,10 @@ public class ConversationService {
 
     public Set<Conversation> getNonHiddenConversationsByName(Long userId, String query) {
         User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        if(passwordEncoder.matches(query, user.getHiddenConversationPassword())) {
+            Set<Conversation> hiddenConversations = getHiddenConversations(userId);
+            return hiddenConversations;
+        }
         Set<Conversation> nonHiddenConversations = getNonHiddenConversations(userId);
         Set<Conversation> filteredConversations = nonHiddenConversations.stream()
                 .filter(c -> {
@@ -599,8 +617,10 @@ public class ConversationService {
         }
     }
 
-    public HiddenConversation hideConversation(Long userId, Long conversationId) {
+    public HiddenConversation hideConversation(Long userId, Long conversationId, HiddenConversationRequest request) {
         User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        if(!passwordEncoder.matches(request.getPassword(), user.getHiddenConversationPassword()))
+            throw new IllegalArgumentException("Wrong password");
         Optional<HiddenConversation> hiddenConversation = hiddenConversationService.findByUserIdAndConversationId(userId, conversationId);
         Conversation conversation = conversationRepository.findById(conversationId).orElseThrow( () -> new IllegalArgumentException("Conversation not found for id: " + conversationId));
 
@@ -618,8 +638,11 @@ public class ConversationService {
         }
     }
 
-    public Boolean unhideConversation(Long hiddenConversationId) {
-        HiddenConversation hiddenConversation = hiddenConversationService.findById(hiddenConversationId).orElseThrow(() -> new IllegalArgumentException("Hidden Conversation not found for the id " + hiddenConversationId));
+    public Boolean unhideConversation(Long userId, Long conversationId, HiddenConversationRequest request) {
+        User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        if(!passwordEncoder.matches(request.getPassword(), user.getHiddenConversationPassword()))
+            throw new IllegalArgumentException("Wrong password");
+        HiddenConversation hiddenConversation = hiddenConversationService.findByUserIdAndConversationId(userId, conversationId).orElseThrow(() -> new IllegalArgumentException("Hidden Conversation not found for the conversation id " + conversationId));
         hiddenConversationService.delete(hiddenConversation);
         return true;
     }

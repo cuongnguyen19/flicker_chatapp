@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import AvatarWithStatus from "@/shared/components/avatarWithStatus";
 import FileItem from "./fileItem";
 import ImageItem from "./imageItem";
@@ -6,12 +6,14 @@ import { User } from "@/redux/slices/user";
 import { useRouter } from "next/navigation";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Loader } from "@/shared/components/loader";
-import { PictureOutlined, FileTextOutlined, CameraOutlined, EditOutlined } from "@ant-design/icons";
+import {PictureOutlined, FileTextOutlined, CameraOutlined, EditOutlined, EyeInvisibleOutlined, EyeOutlined} from "@ant-design/icons";
 import { ConfigProvider, Tabs, TabsProps } from "antd";
 import {
   Conversation,
   getConversationDocsAsyncAction,
   getConversationMediaAsyncAction,
+  hideConversationAsyncAction,
+    unhideConversationAsyncAction,
 } from "@/redux/slices/chat";
 import { Empty } from "@/shared/components/empty";
 import { MessageInstance } from "antd/es/message/interface";
@@ -22,21 +24,34 @@ import { AvatarWithoutStatus } from "@/shared/components/avatarWithoutStatus";
 import ChangeGroupNameModal from "./changeGroupNameModal";
 import ChangeGroupAvatarModal from "./changeGroupAvatarModal";
 import SearchMessageModal from "./searchMessageModal";
+import ConfirmHideConversationModal from "@/app/chat/[id]/confirmHideConversationModal";
+import ConfirmUnhideConversationModal from "@/app/chat/[id]/confirmUnhideConversationModal";
+import {
+  checkHiddenPassStatus,
+} from "@/shared/APIs/userAPI";
+
+
 
 type Props = {
+  user: User;
   showInfo: boolean;
   data: Conversation;
   friend?: User;
   messageApi: MessageInstance;
   dispatch: AppDispatch;
+  isHidden: boolean;
 };
 
-const infoSideBar = ({ showInfo, data, friend, messageApi, dispatch }: Props) => {
+const infoSideBar = ({ user, showInfo, data, friend, messageApi, dispatch, isHidden }: Props) => {
   const { media, document } = data;
   const router = useRouter();
   const [openUpdateAvatar, setOpenUpdateAvatar] = useState(false);
   const [openUpdateName, setOpenUpdateName] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [openHide, setOpenHide] = useState(false);
+  const [openUnhide, setOpenUnhide] = useState(false);
+  const [hiddenPassStatus, setHiddenPassStatus] = useState(true);
 
   const loadMedia = () => {
     const page = Math.floor(media.mediaFiles.length / 20);
@@ -51,6 +66,19 @@ const infoSideBar = ({ showInfo, data, friend, messageApi, dispatch }: Props) =>
       getConversationDocsAsyncAction({ messageApi, conversationId: data.id, page, size: 20 })
     );
   };
+
+  useEffect(() => {
+      const fetchHiddenPassStatus = async () => {
+        try {
+          const response = await checkHiddenPassStatus();
+          setHiddenPassStatus(response); // Assuming the API returns the boolean value directly
+        } catch (error: any) {
+          messageApi.error(error.message);
+        }
+      };
+
+      fetchHiddenPassStatus();
+  }, [user]);
 
   const items: TabsProps["items"] = [
     {
@@ -144,6 +172,23 @@ const infoSideBar = ({ showInfo, data, friend, messageApi, dispatch }: Props) =>
         conversation={data}
         messageApi={messageApi}
       />
+      <ConfirmHideConversationModal
+          open={openHide}
+          onCancel={() => setOpenHide(false)}
+          conversation={data}
+          messageApi={messageApi}
+          dispatch={dispatch}
+          isHiddenPass={hiddenPassStatus}
+      />
+
+      <ConfirmUnhideConversationModal
+          open={openUnhide}
+          onCancel={() => setOpenUnhide(false)}
+          conversation={data}
+          messageApi={messageApi}
+          dispatch={dispatch}
+      />
+
       {data.isGroup ? (
         <div className="relative">
           <AvatarWithoutStatus
@@ -203,6 +248,27 @@ const infoSideBar = ({ showInfo, data, friend, messageApi, dispatch }: Props) =>
               </svg>
               Search
             </button>
+
+            {!isHidden ? (<button
+                onClick={() => setOpenHide(true)}
+                className="flex flex-col justify-center items-center text-text p-2 pb-1 rounded-md hover:bg-gray-100 mt-[-4px]"
+            >
+              <span className="text-gray-500">
+              <EyeInvisibleOutlined />
+            </span>
+              Hide
+            </button>
+                ) : (<button
+                onClick={() => setOpenUnhide(true)}
+                className="flex flex-col justify-center items-center text-text p-2 pb-1 rounded-md hover:bg-gray-100 mt-[-4px]"
+            >
+              <span className="text-gray-500">
+              <EyeOutlined />
+            </span>
+              Unhide
+            </button>
+            )}
+
           </div>
           <GroupMemberCollapse data={data} messageApi={messageApi} conversation={data} />
         </>
@@ -244,6 +310,25 @@ const infoSideBar = ({ showInfo, data, friend, messageApi, dispatch }: Props) =>
             </svg>
             Search
           </button>
+          {!isHidden ? (<button
+                  onClick={() => setOpenHide(true)}
+                  className="flex flex-col justify-center items-center text-text p-2 pb-1 rounded-md hover:bg-gray-100 mt-[-4px]"
+              >
+              <span className="text-gray-500">
+              <EyeInvisibleOutlined />
+            </span>
+                Hide
+              </button>
+          ) : (<button
+                  onClick={() => setOpenUnhide(true)}
+                  className="flex flex-col justify-center items-center text-text p-2 pb-1 rounded-md hover:bg-gray-100 mt-[-4px]"
+              >
+              <span className="text-gray-500">
+              <EyeOutlined />
+            </span>
+                Unhide
+              </button>
+          )}
         </div>
       )}
       <div className="flex-1 w-full p-2 h-10">

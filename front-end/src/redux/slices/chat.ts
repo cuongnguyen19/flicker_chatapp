@@ -13,11 +13,10 @@ import {
   setConversationNotification,
 } from "@/shared/APIs/conversationAPI";
 import {getMessages, hideMessage, markMessageAsSeen} from "@/shared/APIs/messageAPI";
+import {hideConversation, unhideConversation, checkHiddenConversation} from "@/shared/APIs/conversationAPI";
 import { transcribe, translate } from "@/shared/APIs/languageAPI";
 import { RootState } from "../store";
 import { NavigateOptions } from "next/dist/shared/lib/app-router-context";
-import {unFriend} from "@/shared/APIs/contactAPI";
-import {removeFriend} from "@/redux/slices/contact";
 
 export interface File {
   id: number;
@@ -339,7 +338,28 @@ const chatSlice = createSlice({
       }
     },
 
-  },
+    concealConversation: (
+        state,
+        action: PayloadAction<{
+          conversationId: number;
+        }>
+    ) => {
+      state.conversations = state.conversations.filter((c) => c.id !== action.payload.conversationId);
+      state.currentId = null;
+      },
+
+    unconcealConversation: (
+        state,
+        action: PayloadAction<{
+          conversationId: number;
+        }>
+    ) => {
+      state.conversations = state.conversations.filter((c) => c.id !== action.payload.conversationId);
+      state.currentId = null;
+      },
+
+    },
+
   extraReducers: (builder) => {
     builder.addCase(getMessagesAsyncAction.fulfilled, (state, action) => {
       const conversation = state.conversations.find((c) => c.id === action.payload?.conversationId);
@@ -703,14 +723,57 @@ const markMessageAsSeenAsyncAction = createAsyncThunk(
   }
 );
 
-
-
 const hideMessageAsyncAction = createAsyncThunk(
-    "Contact/UnFriend",
+    "Message/Hide",
     async (data: { messageApi: MessageInstance; conversationId: number; messageId: number }, thunkAPI) => {
       try {
         await hideMessage(data.conversationId, data.messageId);
         thunkAPI.dispatch(concealMessage({conversationId: data.conversationId, messageId: data.messageId }));
+      } catch (e: any) {
+        data.messageApi.error(e.message);
+      }
+    }
+);
+
+const hideConversationAsyncAction = createAsyncThunk(
+    "Conversation/Hide",
+    async (data: { messageApi: MessageInstance; conversationId: number; password: string}, thunkAPI) => {
+      try {
+        await hideConversation(data.conversationId, data.password);
+        thunkAPI.dispatch(concealConversation({conversationId: data.conversationId}));
+        data.messageApi.success("Hide conversation successfully");
+      } catch (e: any) {
+        if(e.response?.status === 500) {
+          data.messageApi.error("Wrong password");
+        }
+        else
+          data.messageApi.error(e.message);
+      }
+    }
+);
+
+const unhideConversationAsyncAction = createAsyncThunk(
+    "Conversation/Unhide",
+    async (data: { messageApi: MessageInstance; conversationId: number; password: string}, thunkAPI) => {
+      try {
+        await unhideConversation(data.conversationId, data.password);
+        thunkAPI.dispatch(unconcealConversation({conversationId: data.conversationId}));
+        data.messageApi.success("Unhide conversation successfully");
+      } catch (e: any) {
+        if(e.response?.status === 500)
+          data.messageApi.error("Wrong password");
+        else
+          data.messageApi.error(e.message);
+      }
+    }
+);
+
+const checkHiddenConversationAsyncAction = createAsyncThunk(
+    "Conversation/CheckHidden",
+    async (data: { messageApi: MessageInstance; conversationId: number}, thunkAPI) => {
+      try {
+        const response = await checkHiddenConversation(data.conversationId);
+        return response;
       } catch (e: any) {
         data.messageApi.error(e.message);
       }
@@ -728,6 +791,9 @@ export {
   markMessageAsSeenAsyncAction,
   addConversationAsyncAction,
   hideMessageAsyncAction,
+    hideConversationAsyncAction,
+  unhideConversationAsyncAction,
+  checkHiddenConversationAsyncAction,
 };
 
 export const {
@@ -749,5 +815,7 @@ export const {
   changeConversationAvatar,
   changeConversationNotification,
   concealMessage,
+    concealConversation,
+    unconcealConversation,
 } = chatSlice.actions;
 export default chatSlice.reducer;

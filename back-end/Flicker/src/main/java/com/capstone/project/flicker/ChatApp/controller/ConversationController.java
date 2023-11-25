@@ -102,9 +102,9 @@ public class ConversationController {
                                                                        @RequestParam(defaultValue = "0") int page,
                                                                        @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Set<Conversation> archivedConversations = conversationService.getHiddenConversations(currentUser.getId());
-        Page<Conversation> pagesOfArchivedConversations = conversationService.getPagesOfConversations(archivedConversations, pageable);
-        return ResponseEntity.ok(pagesOfArchivedConversations);
+        Set<Conversation> hiddenConversations = conversationService.getHiddenConversations(currentUser.getId());
+        Page<Conversation> pagesOfHiddenConversations = conversationService.getPagesOfConversations(hiddenConversations, pageable);
+        return ResponseEntity.ok(pagesOfHiddenConversations);
     }
 
     @MessageMapping("/update/{conversationId}/users/add/{currentUserId}")
@@ -232,13 +232,18 @@ public class ConversationController {
     }
 
     @PostMapping(path = "/hide/{conversationId}")
-    public ResponseEntity<HiddenConversation> hideConversation(@CurrentUser CustomUserDetails currentUser, @PathVariable Long conversationId) {
-        return ResponseEntity.ok(conversationService.hideConversation(currentUser.getId(), conversationId));
+    public ResponseEntity<HiddenConversation> hideConversation(@CurrentUser CustomUserDetails currentUser, @PathVariable Long conversationId, @RequestBody HiddenConversationRequest request) {
+        return ResponseEntity.ok(conversationService.hideConversation(currentUser.getId(), conversationId, request));
     }
 
-    @DeleteMapping(path = "/unhide/{hiddenConversationId}")
-    public ResponseEntity<?> unhideConversation(@PathVariable Long hiddenConversationId) {
-        return ResponseEntity.ok(conversationService.unhideConversation(hiddenConversationId));
+    @GetMapping(path = "/checkHidden/{conversationId}")
+    public ResponseEntity<Boolean> checkHiddenConversation(@CurrentUser CustomUserDetails currentUser, @PathVariable Long conversationId) {
+        return ResponseEntity.ok(conversationService.checkHiddenConversation(currentUser.getId(), conversationId));
+    }
+
+    @DeleteMapping(path = "/unhide/{conversationId}")
+    public ResponseEntity<?> unhideConversation(@CurrentUser CustomUserDetails currentUser, @PathVariable Long conversationId, @RequestBody HiddenConversationRequest request) {
+        return ResponseEntity.ok(conversationService.unhideConversation(currentUser.getId(), conversationId, request));
     }
 
     @GetMapping(path = "/language-preference/get/{conversationId}")

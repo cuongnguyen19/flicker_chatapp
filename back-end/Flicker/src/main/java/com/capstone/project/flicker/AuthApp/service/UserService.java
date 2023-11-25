@@ -14,20 +14,18 @@
 package com.capstone.project.flicker.AuthApp.service;
 
 import com.capstone.project.flicker.AuthApp.annotation.CurrentUser;
+import com.capstone.project.flicker.AuthApp.exception.UpdatePasswordException;
 import com.capstone.project.flicker.AuthApp.model.CustomUserDetails;
 import com.capstone.project.flicker.AuthApp.model.Role;
 import com.capstone.project.flicker.AuthApp.model.User;
 import com.capstone.project.flicker.AuthApp.model.UserDevice;
+import com.capstone.project.flicker.AuthApp.model.payload.*;
 import com.capstone.project.flicker.AuthApp.repository.UserRepository;
 import com.capstone.project.flicker.ChatApp.model.File;
 import com.capstone.project.flicker.ChatApp.model.payload.UpdateNotificationRequest;
 import com.capstone.project.flicker.ChatApp.service.FileService;
 import com.capstone.project.flicker.AuthApp.exception.UserLogoutException;
 import com.capstone.project.flicker.AuthApp.model.dto.UserDTO;
-import com.capstone.project.flicker.AuthApp.model.payload.LogOutRequest;
-import com.capstone.project.flicker.AuthApp.model.payload.RegistrationRequest;
-import com.capstone.project.flicker.AuthApp.model.payload.UpdateProfileRequest;
-import com.capstone.project.flicker.AuthApp.model.payload.UpdateUserStatusRequest;
 import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -149,6 +147,7 @@ public class UserService {
         return modelMapper.map(savedUser, UserDTO.class);
     }
 
+
     public UserDTO updateStatus(Long userId, UpdateUserStatusRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found")); // Handle not found
         user.setOnline(request.getOnline());
@@ -242,6 +241,46 @@ public class UserService {
         User user = findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
         user.setNotification(request.getNotification());
         User savedUser = save(user);
+        return modelMapper.map(savedUser, UserDTO.class);
+    }
+
+    public UserDTO setHiddenConversationPassword(Long userId, SetHiddenConversationPasswordRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found")); // Handle not found
+        String newPassword = passwordEncoder.encode(request.getPassword());
+        user.setHiddenConversationPassword(newPassword);
+        User savedUser = userRepository.save(user);
+        return modelMapper.map(savedUser, UserDTO.class);
+    }
+
+    public Boolean checkHiddenConversationPassStatus(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found")); // Handle not found
+        if(user.getHiddenConversationPassword() == null || user.getHiddenConversationPassword().isEmpty())
+            return false;
+        return true;
+    }
+
+    public UserDTO updateHiddenConversationPassword(Long userId, UpdatePasswordRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found")); // Handle not found
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getHiddenConversationPassword())) {
+            logger.info("Current password is invalid for [" + user.getUsername() + "]");
+            throw new UpdatePasswordException(user.getEmail(), "Invalid current password");
+        }
+        String newPassword = passwordEncoder.encode(request.getNewPassword());
+        user.setHiddenConversationPassword(newPassword);
+        User savedUser = userRepository.save(user);
+        return modelMapper.map(savedUser, UserDTO.class);
+    }
+
+    public UserDTO resetHiddenConversationPassword(Long userId, ResetHiddenConversationPasswordRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found")); // Handle not found
+        if (!passwordEncoder.matches(request.getAccountPassword(), user.getPassword())) {
+            logger.info("Current password is invalid for [" + user.getUsername() + "]");
+            throw new UpdatePasswordException(user.getEmail(), "Invalid current password");
+        }
+
+        String newPassword = passwordEncoder.encode(request.getHiddenConversationPassword());
+        user.setHiddenConversationPassword(newPassword);
+        User savedUser = userRepository.save(user);
         return modelMapper.map(savedUser, UserDTO.class);
     }
 }

@@ -143,6 +143,12 @@ public class User extends DateAudit {
     @JsonIgnore
     private Set<File> files = new HashSet<>();
 
+    @Column(name = "HIDDEN_CONVERSATION_PASSWORD")
+    @NotBlank(message = "Password can not be blank")
+    @Size(min = 3, message = "Password must be at least 3 characters long")
+    @JsonIgnore
+    private String hiddenConversationPassword;
+
     public User() {
         super();
     }

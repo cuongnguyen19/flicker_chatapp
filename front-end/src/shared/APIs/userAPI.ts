@@ -109,3 +109,33 @@ export const updatePassword = async (oldPassword: string, newPassword: string) =
     throw e;
   }
 };
+
+export const setHiddenConversationPassword = async (password: string) => {
+  try {
+    return await axiosCaller(`/user/hiddenPass/set`, "PUT", {password});
+  } catch (e) {
+    throw e;
+  }
+};
+export const checkHiddenPassStatus = async () => {
+  try {
+    return await axiosCaller(`/user/hiddenPass/check`, "GET");
+  } catch (e) {
+    throw e;
+  }
+};
+export const updateHiddenConversationPassword = async (oldPassword: string, newPassword: string) => {
+  try {
+    return await axiosCaller(`/user/hiddenPass/update`, "PUT", {oldPassword, newPassword});
+  } catch (e) {
+    throw e;
+  }
+};
+export const resetHiddenConversationPassword = async (accountPassword: string, hiddenConversationPassword: string) => {
+  try {
+    return await axiosCaller(`/user/hiddenPass/reset`, "PUT", {accountPassword, hiddenConversationPassword});
+  } catch (e) {
+    throw e;
+  }
+};
+

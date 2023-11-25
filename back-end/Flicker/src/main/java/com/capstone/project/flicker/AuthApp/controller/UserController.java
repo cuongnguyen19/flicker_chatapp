@@ -213,4 +213,32 @@ public class UserController {
         UserDTO userResponse =  userService.updateNotification(currentUser.getId(), request);
         return ResponseEntity.ok(userResponse);
     }
+
+    @PutMapping("/hiddenPass/set")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Checks hidden conversation password status")
+    public ResponseEntity<UserDTO> setHiddenConversationPassword(@CurrentUser CustomUserDetails currentUser, @RequestBody SetHiddenConversationPasswordRequest request) {
+        return ResponseEntity.ok(userService.setHiddenConversationPassword(currentUser.getId(), request));
+    }
+    @GetMapping("/hiddenPass/check")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Checks hidden conversation password status")
+    public ResponseEntity<Boolean> checkHiddenConversationPassStatus(@CurrentUser CustomUserDetails currentUser) {
+       return ResponseEntity.ok(userService.checkHiddenConversationPassStatus(currentUser.getId()));
+    }
+    @PutMapping("/hiddenPass/update")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Checks hidden conversation password status")
+    public ResponseEntity<UserDTO> updateHiddenConversationPassword(@CurrentUser CustomUserDetails currentUser,
+                                                                    @Param(value = "The UpdatePasswordRequest payload") @Valid @RequestBody UpdatePasswordRequest request) {
+        return ResponseEntity.ok(userService.updateHiddenConversationPassword(currentUser.getId(), request));
+    }
+
+    @PutMapping("/hiddenPass/reset")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Checks hidden conversation password status")
+    public ResponseEntity<UserDTO> resetHiddenConversationPassword(@CurrentUser CustomUserDetails currentUser,
+                                                                    @Param(value = "The ResetPasswordRequest payload") @Valid @RequestBody ResetHiddenConversationPasswordRequest request) {
+        return ResponseEntity.ok(userService.resetHiddenConversationPassword(currentUser.getId(), request));
+    }
 }
