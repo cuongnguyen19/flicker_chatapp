@@ -7,18 +7,25 @@
     <list default="true" id="b944f8e0-888b-4bf2-b144-420847eec854" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/AuthApp/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/AuthApp/controller/UserController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/AuthApp/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/AuthApp/model/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/AuthApp/model/payload/ResetHiddenConversationPasswordRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/AuthApp/model/payload/ResetConversationPasswordRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/AuthApp/model/payload/SetHiddenConversationPasswordRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/AuthApp/model/payload/SetConversationPasswordRequest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/AuthApp/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/AuthApp/service/UserService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/controller/ConversationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/controller/ConversationController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/controller/MessageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/controller/MessageController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/repository/ConversationRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/repository/ConversationRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/repository/MessageRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/repository/MessageRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/service/ConversationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/service/ConversationService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/service/MessageService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/service/MessageService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/chat/[id]/infoSideBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/chat/[id]/infoSideBar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/chat/[id]/messageContextMenu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/chat/[id]/messageContextMenu.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/chat/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/chat/[id]/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/setting/changePasswordModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/setting/changePasswordModal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/chat/chatItem.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/chat/chatItem.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/redux/slices/chat.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/redux/slices/chat.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/shared/APIs/conversationAPI.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/APIs/conversationAPI.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/shared/APIs/messageAPI.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/APIs/messageAPI.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/shared/APIs/userAPI.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/APIs/userAPI.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/shared/components/navbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/components/navbar.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/shared/components/router/protectedRouter.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/components/router/protectedRouter.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/shared/components/router/router.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/components/router/router.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -80,7 +87,9 @@
       <workItem from="1698379630867" duration="748000" />
       <workItem from="1698889259668" duration="16751000" />
       <workItem from="1699451190713" duration="26771000" />
-      <workItem from="1700742938683" duration="16769000" />
+      <workItem from="1700742938683" duration="28349000" />
+      <workItem from="1704708251973" duration="18728000" />
+      <workItem from="1705483007352" duration="7689000" />
     </task>
     <servers />
   </component>

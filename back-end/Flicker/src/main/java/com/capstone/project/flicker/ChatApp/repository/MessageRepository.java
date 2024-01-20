@@ -58,14 +58,14 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             "FROM message m\n" +
             "JOIN archived_conversation ac ON m.conversation = ac.conversation_id\n" +
             "LEFT JOIN conversation_user_setting cus ON m.conversation = cus.conversation_id AND cus.user_id = :userId\n" +
-            "WHERE ac.archived_conversation_id = :archivedConversationId \n" +
+            "WHERE m.conversation = :conversationId \n" +
             "  AND m.created_at <= ac.updated_at\n" +
             "  AND (cus.date_joined IS NULL OR m.created_at >= cus.date_joined)\n" +
             "  AND (cus.date_left IS NULL OR m.created_at <= cus.date_left)\n" +
             "  AND m.message_id NOT IN (SELECT mus.message_id \n" +
             "  FROM message_user_setting mus WHERE mus.user_id = :userId AND mus.conversation_id = :conversationId AND mus.hidden = true) \n" +
             "ORDER BY m.created_at DESC", nativeQuery = true)
-    Page<Message> findMessagesBeforeArchiveAndBeforeLeft(Pageable pageable, @Param("userId") Long userId, @Param("archivedConversationId") Long archivedConversationId);
+    Page<Message> findMessagesBeforeArchiveAndBeforeLeft(Pageable pageable, @Param("userId") Long userId, @Param("conversationId") Long conversationId);
 
     @Query(value = "SELECT m.* \n" +
             "FROM message m\n" +
@@ -106,4 +106,17 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             "  FROM message_user_setting mus WHERE mus.user_id = :userId AND mus.conversation_id = :conversationId AND mus.hidden = true) \n" +
             "ORDER BY m.created_at DESC", nativeQuery = true)
     Set<Message> findMessagesAfterArchiveAndBeforeLeftForFilter(@Param("userId") Long userId, @Param("conversationId") Long conversationId);
+
+    @Query(value = "SELECT m.* \n" +
+            "FROM message m\n" +
+            "JOIN archived_conversation ac ON m.conversation = ac.conversation_id AND ac.user_id = :userId\n" +
+            "LEFT JOIN conversation_user_setting cus ON m.conversation = cus.conversation_id AND cus.user_id = :userId\n" +
+            "WHERE m.conversation = :conversationId \n" +
+            "  AND m.created_at <= ac.updated_at\n" +
+            "  AND (cus.date_joined IS NULL OR m.created_at >= cus.date_joined)\n" +
+            "  AND (cus.date_left IS NULL OR m.created_at <= cus.date_left)\n" +
+            "  AND m.message_id NOT IN (SELECT mus.message_id \n" +
+            "  FROM message_user_setting mus WHERE mus.user_id = :userId AND mus.conversation_id = :conversationId AND mus.hidden = true) \n" +
+            "ORDER BY m.created_at DESC", nativeQuery = true)
+    Set<Message> findMessagesBeforeArchiveAndBeforeLeftForFilter(@Param("userId") Long userId, @Param("conversationId") Long conversationId);
 }

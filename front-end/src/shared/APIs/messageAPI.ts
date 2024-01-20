@@ -55,3 +55,19 @@ export const searchMessages = async (conversationId: number, query: string, page
     throw e;
   }
 };
+
+export const getArchivedMessages = async (conversationId: number, page?: number, size?: number) => {
+  try {
+    return await axiosCaller(`/message/get/archived/${conversationId}`, "GET", {}, { page, size });
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const searchArchivedMessages = async (conversationId: number, query: string, page?: number, size?: number) => {
+  try {
+    return await axiosCaller(`/message/search/archived/${conversationId}`, "GET", {}, { query: query ? query : "''", page, size });
+  } catch (e) {
+    throw e;
+  }
+};

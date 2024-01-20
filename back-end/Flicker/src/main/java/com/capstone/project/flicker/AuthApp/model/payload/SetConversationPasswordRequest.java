@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SetHiddenConversationPasswordRequest {
+public class SetConversationPasswordRequest {
     @NotBlank(message = "password cannot be blank")
     @NotNull(message = "password cannot be null")
     @Schema(name = "A valid password", allowableValues = "NonEmpty String")

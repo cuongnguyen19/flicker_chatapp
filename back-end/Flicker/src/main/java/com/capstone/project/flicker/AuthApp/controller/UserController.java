@@ -15,6 +15,7 @@ package com.capstone.project.flicker.AuthApp.controller;
 
 import com.capstone.project.flicker.AuthApp.annotation.CurrentUser;
 import com.capstone.project.flicker.AuthApp.model.payload.*;
+import com.capstone.project.flicker.ChatApp.model.payload.ArchivedConversationRequest;
 import com.capstone.project.flicker.ChatApp.model.payload.UpdateNotificationRequest;
 import com.capstone.project.flicker.ChatApp.service.FriendshipService;
 import com.capstone.project.flicker.AuthApp.event.OnUserAccountChangeEvent;
@@ -216,8 +217,8 @@ public class UserController {
 
     @PutMapping("/hiddenPass/set")
     @PreAuthorize("hasRole('USER')")
-    @Operation(summary = "Checks hidden conversation password status")
-    public ResponseEntity<UserDTO> setHiddenConversationPassword(@CurrentUser CustomUserDetails currentUser, @RequestBody SetHiddenConversationPasswordRequest request) {
+    @Operation(summary = "Set hidden conversation password")
+    public ResponseEntity<UserDTO> setHiddenConversationPassword(@CurrentUser CustomUserDetails currentUser, @RequestBody SetConversationPasswordRequest request) {
         return ResponseEntity.ok(userService.setHiddenConversationPassword(currentUser.getId(), request));
     }
     @GetMapping("/hiddenPass/check")
@@ -228,7 +229,7 @@ public class UserController {
     }
     @PutMapping("/hiddenPass/update")
     @PreAuthorize("hasRole('USER')")
-    @Operation(summary = "Checks hidden conversation password status")
+    @Operation(summary = "Updates hidden conversation password")
     public ResponseEntity<UserDTO> updateHiddenConversationPassword(@CurrentUser CustomUserDetails currentUser,
                                                                     @Param(value = "The UpdatePasswordRequest payload") @Valid @RequestBody UpdatePasswordRequest request) {
         return ResponseEntity.ok(userService.updateHiddenConversationPassword(currentUser.getId(), request));
@@ -236,9 +237,45 @@ public class UserController {
 
     @PutMapping("/hiddenPass/reset")
     @PreAuthorize("hasRole('USER')")
-    @Operation(summary = "Checks hidden conversation password status")
+    @Operation(summary = "Resets hidden conversation password")
     public ResponseEntity<UserDTO> resetHiddenConversationPassword(@CurrentUser CustomUserDetails currentUser,
-                                                                    @Param(value = "The ResetPasswordRequest payload") @Valid @RequestBody ResetHiddenConversationPasswordRequest request) {
+                                                                    @Param(value = "The ResetPasswordRequest payload") @Valid @RequestBody ResetConversationPasswordRequest request) {
         return ResponseEntity.ok(userService.resetHiddenConversationPassword(currentUser.getId(), request));
+    }
+
+
+    @PutMapping("/archivedPass/set")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Set hidden conversation password")
+    public ResponseEntity<UserDTO> setArchivedConversationPassword(@CurrentUser CustomUserDetails currentUser, @RequestBody SetConversationPasswordRequest request) {
+        return ResponseEntity.ok(userService.setArchivedConversationPassword(currentUser.getId(), request));
+    }
+    @GetMapping("/archivedPass/check")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Checks hidden conversation password status")
+    public ResponseEntity<Boolean> checkArchivedConversationPassStatus(@CurrentUser CustomUserDetails currentUser) {
+        return ResponseEntity.ok(userService.checkArchivedConversationPassStatus(currentUser.getId()));
+    }
+
+    @PutMapping("/archivedPassMatch/check")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Checks archived conversation password match")
+    public ResponseEntity<Boolean> checkArchivedConversationPassMatch(@CurrentUser CustomUserDetails currentUser, @RequestBody ArchivedConversationRequest request) {
+        return ResponseEntity.ok(userService.checkArchivedConversationPass(currentUser.getId(), request));
+    }
+    @PutMapping("/archivedPass/update")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Updates hidden conversation password")
+    public ResponseEntity<UserDTO> updateArchivedConversationPassword(@CurrentUser CustomUserDetails currentUser,
+                                                                    @Param(value = "The UpdatePasswordRequest payload") @Valid @RequestBody UpdatePasswordRequest request) {
+        return ResponseEntity.ok(userService.updateArchivedConversationPassword(currentUser.getId(), request));
+    }
+
+    @PutMapping("/archivedPass/reset")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Resets hidden conversation password")
+    public ResponseEntity<UserDTO> resetArchivedConversationPassword(@CurrentUser CustomUserDetails currentUser,
+                                                                   @Param(value = "The ResetPasswordRequest payload") @Valid @RequestBody ResetConversationPasswordRequest request) {
+        return ResponseEntity.ok(userService.resetArchivedConversationPassword(currentUser.getId(), request));
     }
 }

@@ -40,6 +40,9 @@ public interface ConversationRepository extends JpaRepository<Conversation, Long
     @Query(value = "SELECT c.* FROM conversation c WHERE c.conversation_id IN (SELECT cu.conversation_id FROM conversation_user cu WHERE cu.user_id = :userId) AND EXISTS (SELECT ac FROM archived_conversation ac WHERE ac.conversation_id = c.conversation_id AND ac.user_id = :userId AND ac.is_removed = :isRemoved) ORDER BY c.updated_at DESC", nativeQuery = true)
     Set<Conversation> findArchivedConversationsForUser(@Param("userId") Long userId, @Param("isRemoved") Boolean isRemoved);
 
+    @Query(value = "SELECT c.* FROM conversation c WHERE c.conversation_id IN (SELECT ac.conversation_id FROM archived_conversation ac WHERE ac.user_id = :userId AND ac.is_removed = :isRemoved) ORDER BY c.updated_at DESC", nativeQuery = true)
+    Set<Conversation> findArchivedConversationsForUserAfterLeft(@Param("userId") Long userId, @Param("isRemoved") Boolean isRemoved);
+
     @Query(value = "SELECT c.* FROM conversation c WHERE c.conversation_id IN (SELECT cu.conversation_id FROM conversation_user cu WHERE cu.user_id = :userId) AND NOT EXISTS (SELECT hc FROM hidden_conversation hc WHERE hc.conversation_id = c.conversation_id AND hc.user_id = :userId) ORDER BY c.updated_at DESC", nativeQuery = true)
     Set<Conversation> findNonHiddenConversationsForUser(@Param("userId") Long userId);
 

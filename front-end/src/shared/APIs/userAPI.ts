@@ -131,9 +131,46 @@ export const updateHiddenConversationPassword = async (oldPassword: string, newP
     throw e;
   }
 };
-export const resetHiddenConversationPassword = async (accountPassword: string, hiddenConversationPassword: string) => {
+export const resetHiddenConversationPassword = async (accountPassword: string, conversationPassword: string) => {
   try {
-    return await axiosCaller(`/user/hiddenPass/reset`, "PUT", {accountPassword, hiddenConversationPassword});
+    return await axiosCaller(`/user/hiddenPass/reset`, "PUT", {accountPassword, conversationPassword});
+  } catch (e) {
+    throw e;
+  }
+};
+
+
+export const setArchivedConversationPassword = async (password: string) => {
+  try {
+    return await axiosCaller(`/user/archivedPass/set`, "PUT", {password});
+  } catch (e) {
+    throw e;
+  }
+};
+export const checkArchivedPassStatus = async () => {
+  try {
+    return await axiosCaller(`/user/archivedPass/check`, "GET");
+  } catch (e) {
+    throw e;
+  }
+};
+export const checkArchivedPassMatch = async (password: string) => {
+  try {
+    return await axiosCaller(`/user/archivedPassMatch/check`, "PUT", {password});
+  } catch (e) {
+    throw e;
+  }
+};
+export const updateArchivedConversationPassword = async (oldPassword: string, newPassword: string) => {
+  try {
+    return await axiosCaller(`/user/archivedPass/update`, "PUT", {oldPassword, newPassword});
+  } catch (e) {
+    throw e;
+  }
+};
+export const resetArchivedConversationPassword = async (accountPassword: string, conversationPassword: string) => {
+  try {
+    return await axiosCaller(`/user/archivedPass/reset`, "PUT", {accountPassword, conversationPassword});
   } catch (e) {
     throw e;
   }

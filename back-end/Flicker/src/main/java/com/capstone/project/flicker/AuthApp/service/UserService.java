@@ -22,6 +22,7 @@ import com.capstone.project.flicker.AuthApp.model.UserDevice;
 import com.capstone.project.flicker.AuthApp.model.payload.*;
 import com.capstone.project.flicker.AuthApp.repository.UserRepository;
 import com.capstone.project.flicker.ChatApp.model.File;
+import com.capstone.project.flicker.ChatApp.model.payload.ArchivedConversationRequest;
 import com.capstone.project.flicker.ChatApp.model.payload.UpdateNotificationRequest;
 import com.capstone.project.flicker.ChatApp.service.FileService;
 import com.capstone.project.flicker.AuthApp.exception.UserLogoutException;
@@ -244,7 +245,7 @@ public class UserService {
         return modelMapper.map(savedUser, UserDTO.class);
     }
 
-    public UserDTO setHiddenConversationPassword(Long userId, SetHiddenConversationPasswordRequest request) {
+    public UserDTO setHiddenConversationPassword(Long userId, SetConversationPasswordRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found")); // Handle not found
         String newPassword = passwordEncoder.encode(request.getPassword());
         user.setHiddenConversationPassword(newPassword);
@@ -256,6 +257,14 @@ public class UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found")); // Handle not found
         if(user.getHiddenConversationPassword() == null || user.getHiddenConversationPassword().isEmpty())
             return false;
+        return true;
+    }
+
+    public Boolean checkArchivedConversationPass(Long userId, ArchivedConversationRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found")); // Handle not found
+        if (!passwordEncoder.matches(request.getPassword(), user.getArchivedConversationPassword())) {
+            throw new IllegalArgumentException("Wrong archived conversation password");
+        }
         return true;
     }
 
@@ -271,15 +280,55 @@ public class UserService {
         return modelMapper.map(savedUser, UserDTO.class);
     }
 
-    public UserDTO resetHiddenConversationPassword(Long userId, ResetHiddenConversationPasswordRequest request) {
+    public UserDTO resetHiddenConversationPassword(Long userId, ResetConversationPasswordRequest request) {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found")); // Handle not found
         if (!passwordEncoder.matches(request.getAccountPassword(), user.getPassword())) {
             logger.info("Current password is invalid for [" + user.getUsername() + "]");
             throw new UpdatePasswordException(user.getEmail(), "Invalid current password");
         }
 
-        String newPassword = passwordEncoder.encode(request.getHiddenConversationPassword());
+        String newPassword = passwordEncoder.encode(request.getConversationPassword());
         user.setHiddenConversationPassword(newPassword);
+        User savedUser = userRepository.save(user);
+        return modelMapper.map(savedUser, UserDTO.class);
+    }
+
+    public UserDTO setArchivedConversationPassword(Long userId, SetConversationPasswordRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found")); // Handle not found
+        String newPassword = passwordEncoder.encode(request.getPassword());
+        user.setArchivedConversationPassword(newPassword);
+        User savedUser = userRepository.save(user);
+        return modelMapper.map(savedUser, UserDTO.class);
+    }
+
+    public Boolean checkArchivedConversationPassStatus(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found")); // Handle not found
+        if(user.getArchivedConversationPassword() == null || user.getArchivedConversationPassword().isEmpty())
+            return false;
+        return true;
+    }
+
+    public UserDTO updateArchivedConversationPassword(Long userId, UpdatePasswordRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found")); // Handle not found
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getArchivedConversationPassword())) {
+            logger.info("Current password is invalid for [" + user.getUsername() + "]");
+            throw new UpdatePasswordException(user.getEmail(), "Invalid current password");
+        }
+        String newPassword = passwordEncoder.encode(request.getNewPassword());
+        user.setArchivedConversationPassword(newPassword);
+        User savedUser = userRepository.save(user);
+        return modelMapper.map(savedUser, UserDTO.class);
+    }
+
+    public UserDTO resetArchivedConversationPassword(Long userId, ResetConversationPasswordRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found")); // Handle not found
+        if (!passwordEncoder.matches(request.getAccountPassword(), user.getPassword())) {
+            logger.info("Current password is invalid for [" + user.getUsername() + "]");
+            throw new UpdatePasswordException(user.getEmail(), "Invalid current password");
+        }
+
+        String newPassword = passwordEncoder.encode(request.getConversationPassword());
+        user.setArchivedConversationPassword(newPassword);
         User savedUser = userRepository.save(user);
         return modelMapper.map(savedUser, UserDTO.class);
     }

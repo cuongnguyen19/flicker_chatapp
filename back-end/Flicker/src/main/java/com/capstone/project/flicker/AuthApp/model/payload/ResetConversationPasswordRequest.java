@@ -14,14 +14,14 @@ import javax.validation.constraints.NotNull;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResetHiddenConversationPasswordRequest {
+public class ResetConversationPasswordRequest {
     @NotBlank(message = "account password  can not be blank")
     @NotNull(message = "account password can not be null")
     @Schema(name = "A valid password", allowableValues = "NonEmpty String")
     private String accountPassword;
 
-    @NotBlank(message = "hidden conversation password can not be blank")
-    @NotNull(message = "hidden conversation password can not be null")
+    @NotBlank(message = "conversation password can not be blank")
+    @NotNull(message = "conversation password can not be null")
     @Schema(name = "A valid password", allowableValues = "NonEmpty String")
-    private String hiddenConversationPassword;
+    private String conversationPassword;
 }

@@ -7,16 +7,18 @@ import {
   getConversationNotification,
   getConversationPreferLanguage,
   getConversations,
+    getArchivedConversations,
   getNumOfUnseenMessages,
   getUserRoles,
   searchConversations,
   setConversationNotification,
 } from "@/shared/APIs/conversationAPI";
-import {getMessages, hideMessage, markMessageAsSeen} from "@/shared/APIs/messageAPI";
-import {hideConversation, unhideConversation, checkHiddenConversation} from "@/shared/APIs/conversationAPI";
+import {getMessages, hideMessage, markMessageAsSeen, getArchivedMessages} from "@/shared/APIs/messageAPI";
+import {hideConversation, unhideConversation, checkHiddenConversation, archiveConversation, unarchiveConversation} from "@/shared/APIs/conversationAPI";
 import { transcribe, translate } from "@/shared/APIs/languageAPI";
 import { RootState } from "../store";
 import { NavigateOptions } from "next/dist/shared/lib/app-router-context";
+import {checkArchivedPassMatch} from "@/shared/APIs/userAPI";
 
 export interface File {
   id: number;
@@ -469,6 +471,66 @@ const getConversationsAsyncAction = createAsyncThunk(
   }
 );
 
+
+
+
+const getArchivedConversationsAsyncAction = createAsyncThunk(
+    "Chat/GetArchivedConversations",
+    async (data: { messageApi: MessageInstance, page?: number; size?: number }, thunkAPI) => {
+      try {
+        thunkAPI.dispatch(setState({ loadingConversation: true }));
+        const response: any = await getArchivedConversations(data.page, data.size);
+        const conversations = response.content as Conversation[];
+        await Promise.all(
+            conversations.map(async (c) => {
+              const messageResponse = await getArchivedMessages(c.id, undefined, 20);
+              const media = await getConversationMedia(c.id, undefined, 20);
+              const docs = await getConversationDocs(c.id, undefined, 20);
+              /*const preferLanguage = await getConversationPreferLanguage(c.id);
+              const unseenMessage = await getNumOfUnseenMessages(c.id);
+              const notification = await getConversationNotification(c.id);
+              const userRoles = (await getUserRoles(c.id)) as {
+                [s: number]: "ROLE_PARTICIPANT" | "ROLE_ADMIN" | "ROLE_SUB_ADMIN";
+              };
+              Object.entries(userRoles).forEach(([k, v]) => {
+                const user = c.users.find((u) => u.id === Number(k));
+                if (user) {
+                  user.role = v;
+                }
+              });*/
+              c.message = {
+                hasMore: !messageResponse.last,
+                messages: messageResponse.content,
+              };
+              c.media = {
+                hasMore: !media.last,
+                mediaFiles: media.content,
+              };
+              c.document = {
+                hasMore: !docs.last,
+                documentFiles: docs.content.filter(
+                    (f: any) => f.contentType !== "application/octet-stream"
+                ),
+              };
+             /* c.preferLanguage = preferLanguage ? preferLanguage : null;
+              c.shouldTranslate = false;
+              c.unseenMessage = unseenMessage;
+              c.notification = notification ? true : false;*/
+            })
+        );
+        thunkAPI.dispatch(setState({ loadingConversation: false, conversations }));
+        if (response.content?.length > 0) {
+          thunkAPI.dispatch(selectIf({ currentId: response.content[0].id }));
+        }
+      } catch (e: any) {
+        thunkAPI.dispatch(setState({ loadingConversation: false }));
+        data.messageApi.error(e.message);
+      }
+    }
+);
+
+
+
 const addConversationAsyncAction = createAsyncThunk(
   "Chat/addConversation",
   async (data: { messageApi: MessageInstance; conversation: Conversation }, thunkAPI) => {
@@ -780,8 +842,51 @@ const checkHiddenConversationAsyncAction = createAsyncThunk(
     }
 );
 
+const archiveConversationAsyncAction = createAsyncThunk(
+    "Conversation/Archive",
+    async (data: { messageApi: MessageInstance; conversationId: number; password: string}, thunkAPI) => {
+      try {
+        await archiveConversation(data.conversationId, data.password);
+        thunkAPI.dispatch(concealConversation({conversationId: data.conversationId}));
+        data.messageApi.success("Archive conversation successfully");
+      } catch (e: any) {
+        if(e.response?.status === 500) {
+          data.messageApi.error("Wrong password");
+        }
+        else
+          data.messageApi.error(e.message);
+      }
+    }
+);
+
+const unarchiveConversationAsyncAction = createAsyncThunk(
+    "Conversation/Unarchive",
+    async (data: { messageApi: MessageInstance; conversationId: number;}, thunkAPI) => {
+      try {
+        await unarchiveConversation(data.conversationId);
+        thunkAPI.dispatch(unconcealConversation({conversationId: data.conversationId}));
+        data.messageApi.success("Unarchive conversation successfully");
+      } catch (e: any) {
+        data.messageApi.error(e.message);
+      }
+    }
+);
+
+const checkArchivedConversationPass = createAsyncThunk(
+    "Conversation/CheckArchivedConversationPass",
+    async (data: { messageApi: MessageInstance; password: string}, thunkAPI) => {
+      try {
+        const response = await checkArchivedPassMatch(data.password);
+        return response;
+      } catch (e: any) {
+        data.messageApi.error(e.message);
+      }
+    }
+);
+
 export {
   getConversationsAsyncAction,
+  getArchivedConversationsAsyncAction,
   searchConversationsAsyncAction,
   getMessagesAsyncAction,
   getConversationMediaAsyncAction,
@@ -794,6 +899,9 @@ export {
     hideConversationAsyncAction,
   unhideConversationAsyncAction,
   checkHiddenConversationAsyncAction,
+    archiveConversationAsyncAction,
+  unarchiveConversationAsyncAction,
+  checkArchivedConversationPass,
 };
 
 export const {

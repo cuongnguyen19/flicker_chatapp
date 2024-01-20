@@ -168,3 +168,27 @@ export const checkHiddenConversation = async (conversationId: number) => {
     throw e;
   }
 };
+
+export const getArchivedConversations = async (page?: number, size?: number) => {
+  try {
+    return await axiosCaller("/conversation/get/archived", "GET", {}, { page, size });
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const archiveConversation = async (conversationId: number, password: string) => {
+  try {
+    return await axiosCaller(`/conversation/archive/${conversationId}`, "POST", {password});
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const unarchiveConversation = async (conversationId: number) => {
+  try {
+    return await axiosCaller(`/conversation/unarchive/${conversationId}`, "DELETE");
+  } catch (e) {
+    throw e;
+  }
+};

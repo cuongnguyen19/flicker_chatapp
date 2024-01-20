@@ -65,7 +65,8 @@ public class ConversationService {
 
     public Set<Conversation> getArchivedConversations(Long userId, Boolean isRemoved) {
         User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        return conversationRepository.findArchivedConversationsForUser(userId, isRemoved);
+        //return conversationRepository.findArchivedConversationsForUser(userId, isRemoved);
+        return conversationRepository.findArchivedConversationsForUserAfterLeft(userId, isRemoved);
     }
 
     public Set<Conversation> getNonHiddenConversations(Long userId) {
@@ -90,7 +91,13 @@ public class ConversationService {
 
         }).collect(Collectors.toSet());
 
-        return results;
+        Set<Conversation> sortedConversations = new TreeSet<>(
+                Comparator.comparing(Conversation::getUpdatedAt).reversed()
+        );
+
+        sortedConversations.addAll(results);
+
+        return sortedConversations;
     }
 
     public Set<Conversation> getHiddenConversations(Long userId) {
@@ -177,7 +184,17 @@ public class ConversationService {
     public Boolean checkUserInConversation(Long userId, Long conversationId) {
         User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
         Conversation conversation = findConversationById(conversationId);
-        return conversation.getUsers().contains(user);
+        Boolean exist = false;
+        for(User member: conversation.getUsers()) {
+            if(member.getId() == user.getId()) {
+                exist = true;
+                break;
+            }
+        }
+        if(!exist)
+            return false;
+        return true;
+
     }
 
     public Set<Long> getAllUsersIdByConversationId(Long id) {
@@ -564,8 +581,10 @@ public class ConversationService {
         throw new IllegalArgumentException("The group's photo does not exist");
     }
 
-    public ArchivedConversation archiveConversation(Long userId, Long conversationId) {
+    public ArchivedConversation archiveConversation(Long userId, Long conversationId, ArchivedConversationRequest request) {
         User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        if(!passwordEncoder.matches(request.getPassword(), user.getArchivedConversationPassword()))
+            throw new IllegalArgumentException("Wrong password");
         Optional<ArchivedConversation> archivedConversation = archivedConversationService.findByUserIdAndConversationId(userId, conversationId);
         Conversation conversation = conversationRepository.findById(conversationId).orElseThrow( () -> new IllegalArgumentException("Conversation not found for id: " + conversationId));
 
@@ -584,10 +603,13 @@ public class ConversationService {
         }
     }
 
-    public Boolean unarchiveConversation(Long archivedConversationId) {
-        ArchivedConversation archivedConversation = archivedConversationService.findById(archivedConversationId).orElseThrow(() -> new IllegalArgumentException("Archived Conversation not found for the id " + archivedConversationId));
-        archivedConversationService.delete(archivedConversation);
-        return true;
+    public Boolean unarchiveConversation(Long userId, Long conversationId) {
+        Optional<ArchivedConversation> archivedConversation = archivedConversationService.findByUserIdAndConversationId(userId, conversationId);
+        if(archivedConversation.isPresent()) {
+            archivedConversationService.delete(archivedConversation.get());
+            return true;
+        }
+        throw new IllegalArgumentException("Archived Conversation not found for the conversation id " + conversationId);
     }
 
     public ArchivedConversation markRemovedArchivedConversation(Long archivedConversationId) {
@@ -678,26 +700,30 @@ public class ConversationService {
 
     public Page<File> getAllFilesInConversation(Long userId, Long conversationId, Pageable pageable) throws Exception {
         User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        Conversation conversation = validateUserInConversation(user, conversationId);
-
-        return fileService.getAllFilesInConversation(conversationId, pageable);
+        //Conversation conversation = validateUserInConversation(user, conversationId);
+        if(userWasInConversation(userId, conversationId)) {
+            return fileService.getAllFilesInConversation(conversationId, pageable);
+        }
+        throw new IllegalArgumentException("User: " + user.getUsername() + " has not been in specified conversation: " + conversationId);
 
     }
 
     public Page<File> getMediaInConversation(Long userId, Long conversationId, Pageable pageable) throws Exception {
         User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        Conversation conversation = validateUserInConversation(user, conversationId);
-
-        return fileService.getMediaInConversation(userId, conversationId, pageable);
-
+        //Conversation conversation = validateUserInConversation(user, conversationId);
+        if(userWasInConversation(userId, conversationId)) {
+            return fileService.getMediaInConversation(userId, conversationId, pageable);
+        }
+        throw new IllegalArgumentException("User: " + user.getUsername() + " has not been in specified conversation: " + conversationId);
     }
 
     public Page<File> getDocsInConversation(Long userId, Long conversationId, Pageable pageable) throws Exception {
         User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        Conversation conversation = validateUserInConversation(user, conversationId);
-
-        return fileService.getDocsInConversation(userId, conversationId, pageable);
-
+        //Conversation conversation = validateUserInConversation(user, conversationId);
+        if(userWasInConversation(userId, conversationId)) {
+            return fileService.getDocsInConversation(userId, conversationId, pageable);
+        }
+        throw new IllegalArgumentException("User: " + user.getUsername() + " has not been in specified conversation: " + conversationId);
     }
 
     public Set<UserDTO> getUsersUnseenMessage(Long userId, Long messageId, Long conversationId) {

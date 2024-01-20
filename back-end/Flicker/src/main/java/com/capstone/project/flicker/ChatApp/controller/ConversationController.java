@@ -51,7 +51,8 @@ public class ConversationController {
                                                                           @RequestParam(defaultValue = "0") int page,
                                                                           @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Set<Conversation> conversations = conversationService.getNonHiddenConversations(currentUser.getId());
+        //Set<Conversation> conversations = conversationService.getNonHiddenConversations(currentUser.getId());
+        Set<Conversation> conversations = conversationService.getNonHiddenConversationsWithMessages(currentUser.getId(), pageable);
         Page<Conversation> pagesOfConversations = conversationService.getPagesOfConversations(conversations, pageable);
         return ResponseEntity.ok(pagesOfConversations);
     }
@@ -212,13 +213,13 @@ public class ConversationController {
     }*/
 
     @PostMapping(path = "/archive/{conversationId}")
-    public ResponseEntity<ArchivedConversation> archiveConversation(@CurrentUser CustomUserDetails currentUser, @PathVariable Long conversationId) {
-        return ResponseEntity.ok(conversationService.archiveConversation(currentUser.getId(), conversationId));
+    public ResponseEntity<ArchivedConversation> archiveConversation(@CurrentUser CustomUserDetails currentUser, @PathVariable Long conversationId, @RequestBody ArchivedConversationRequest request) {
+        return ResponseEntity.ok(conversationService.archiveConversation(currentUser.getId(), conversationId, request));
     }
 
-    @DeleteMapping(path = "/unarchive/{archivedConversationId}")
-    public ResponseEntity<?> unarchiveConversation(@PathVariable Long archivedConversationId) {
-        return ResponseEntity.ok(conversationService.unarchiveConversation(archivedConversationId));
+    @DeleteMapping(path = "/unarchive/{conversationId}")
+    public ResponseEntity<?> unarchiveConversation(@CurrentUser CustomUserDetails currentUser, @PathVariable Long conversationId) {
+        return ResponseEntity.ok(conversationService.unarchiveConversation(currentUser.getId(), conversationId));
     }
 
     @DeleteMapping(path = "/mark-removed/{archivedConversationId}")

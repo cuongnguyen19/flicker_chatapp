@@ -35,6 +35,7 @@ const Router = ({ messages, children, dispatch }: Props) => {
       if (pathname === "/resetpassword") setTitle("Flicker - Reset Password");
       if (pathname === "/forgotpassword") setTitle("Flicker - Forgot Password");
       if (pathname.startsWith("/chat")) setTitle("Flicker - Chat");
+      if (pathname.startsWith("/archivedChat")) setTitle("Flicker - Archived Chat");
       if (pathname.startsWith("/contact")) setTitle("Flicker - Contact");
       if (pathname === "/setting") setTitle("Flicker - Setting");
       if (pathname === "/profile") setTitle("Flicker - Profile");
