@@ -249,7 +249,7 @@ const infoSideBar = ({ user, showInfo, data, friend, messageApi, dispatch, isHid
               Search
             </button>
 
-            {!isHidden ? (<button
+            {/*{!isHidden ? (<button
                 onClick={() => setOpenHide(true)}
                 className="flex flex-col justify-center items-center text-text p-2 pb-1 rounded-md hover:bg-gray-100 mt-[-4px]"
             >
@@ -267,7 +267,7 @@ const infoSideBar = ({ user, showInfo, data, friend, messageApi, dispatch, isHid
             </span>
               Unhide
             </button>
-            )}
+            )}*/}
 
           </div>
           <GroupMemberCollapse data={data} messageApi={messageApi} conversation={data} />
@@ -310,7 +310,7 @@ const infoSideBar = ({ user, showInfo, data, friend, messageApi, dispatch, isHid
             </svg>
             Search
           </button>
-          {!isHidden ? (<button
+          {/*{!isHidden ? (<button
                   onClick={() => setOpenHide(true)}
                   className="flex flex-col justify-center items-center text-text p-2 pb-1 rounded-md hover:bg-gray-100 mt-[-4px]"
               >
@@ -328,7 +328,7 @@ const infoSideBar = ({ user, showInfo, data, friend, messageApi, dispatch, isHid
             </span>
                 Unhide
               </button>
-          )}
+          )}*/}
         </div>
       )}
       <div className="flex-1 w-full p-2 h-10">

@@ -1,5 +1,7 @@
 package com.capstone.project.flicker.ChatApp.service;
 
+import com.capstone.project.flicker.ChatApp.model.ArchivedConversation;
+import com.capstone.project.flicker.ChatApp.repository.ArchivedConversationRepository;
 import com.capstone.project.flicker.ChatApp.repository.FileRepository;
 import com.capstone.project.flicker.AuthApp.model.User;
 import com.capstone.project.flicker.ChatApp.model.Conversation;
@@ -114,13 +116,28 @@ public class FileService {
     }
 
     public Page<File> getMediaInConversation(Long userId, Long conversationId, Pageable pageable) throws Exception {
-        Page<File> files = fileRepository.findMediaInConversation(pageable, conversationId, userId);
-        return files;
+        return fileRepository.findMediaInConversation(pageable, conversationId, userId);
+    }
+
+    public Page<File> getArchivedMediaInConversation(Long userId, Long conversationId, Pageable pageable) throws Exception {
+        return fileRepository.findArchivedMediaInConversation(pageable, conversationId, userId);
+    }
+
+    public Page<File> getNonArchivedMediaInConversation(Long userId, Long conversationId, Pageable pageable) throws Exception {
+        return fileRepository.findNonArchivedMediaInConversation(pageable, conversationId, userId);
     }
 
     public Page<File> getDocsInConversation(Long userId, Long conversationId, Pageable pageable) throws Exception {
-        Page<File> files = fileRepository.findDocsInConversation(pageable, conversationId, userId);
-        return files;
+        return fileRepository.findDocsInConversation(pageable, conversationId, userId);
+
+    }
+
+    public Page<File> getArchivedDocsInConversation(Long userId, Long conversationId, Pageable pageable) throws Exception {
+        return fileRepository.findArchivedDocsInConversation(pageable, conversationId, userId);
+    }
+
+    public Page<File> getNonArchivedDocsInConversation(Long userId, Long conversationId, Pageable pageable) throws Exception {
+        return fileRepository.findNonArchivedDocsInConversation(pageable, conversationId, userId);
     }
 
     public ByteArrayResource downloadFile(Long fileId) {

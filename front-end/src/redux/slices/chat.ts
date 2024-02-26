@@ -3,11 +3,13 @@ import { User } from "./user";
 import { MessageInstance } from "antd/es/message/interface";
 import {
   getConversationDocs,
+  getArchivedConversationDocs,
   getConversationMedia,
+  getArchivedConversationMedia,
   getConversationNotification,
   getConversationPreferLanguage,
   getConversations,
-    getArchivedConversations,
+  getArchivedConversations,
   getNumOfUnseenMessages,
   getUserRoles,
   searchConversations,
@@ -484,8 +486,8 @@ const getArchivedConversationsAsyncAction = createAsyncThunk(
         await Promise.all(
             conversations.map(async (c) => {
               const messageResponse = await getArchivedMessages(c.id, undefined, 20);
-              const media = await getConversationMedia(c.id, undefined, 20);
-              const docs = await getConversationDocs(c.id, undefined, 20);
+              const media = await getArchivedConversationMedia(c.id, undefined, 20);
+              const docs = await getArchivedConversationDocs(c.id, undefined, 20);
               /*const preferLanguage = await getConversationPreferLanguage(c.id);
               const unseenMessage = await getNumOfUnseenMessages(c.id);
               const notification = await getConversationNotification(c.id);

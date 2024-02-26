@@ -45,14 +45,14 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             "WHERE m.conversation= :conversationId \n" +
             "  AND (ac.updated_at IS NULL OR m.created_at > ac.updated_at)\n" +
             "ORDER BY m.created_at DESC", nativeQuery = true)
-    Page<Message> findMessagesAfterArchive(Pageable pageable, @Param("userId") Long userId, @Param("conversationId") Long conversationId);
+    Page<Message> findArchivedMessages(Pageable pageable, @Param("userId") Long userId, @Param("conversationId") Long conversationId);
     @Query(value = "SELECT m.* \n" +
             "FROM message m\n" +
             "JOIN archived_conversation ac ON m.conversation = ac.conversation_id\n" +
             "WHERE ac.archived_conversation_id = :archivedConversationId \n" +
             "  AND m.created_at <= ac.updated_at\n" +
             "ORDER BY m.created_at DESC", nativeQuery = true)
-    Page<Message> findMessagesBeforeArchive(Pageable pageable, @Param("archivedConversationId") Long archivedConversationId);
+    Page<Message> findNonArchivedMessages(Pageable pageable, @Param("archivedConversationId") Long archivedConversationId);
 
     @Query(value = "SELECT m.* \n" +
             "FROM message m\n" +
@@ -78,7 +78,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             "  AND m.message_id NOT IN (SELECT mus.message_id \n" +
             "  FROM message_user_setting mus WHERE mus.user_id = :userId AND mus.conversation_id = :conversationId AND mus.hidden = true) \n" +
             "ORDER BY m.created_at DESC", nativeQuery = true)
-    Page<Message> findMessagesAfterArchiveAndBeforeLeft(Pageable pageable, @Param("userId") Long userId, @Param("conversationId") Long conversationId);
+    Page<Message> findArchivedMessagesBeforeLeft(Pageable pageable, @Param("userId") Long userId, @Param("conversationId") Long conversationId);
 
     @Query(value = "SELECT m.* FROM message m WHERE m.message_id = :messageId AND m.conversation = :conversationId", nativeQuery = true)
     Optional<Message> findByMessageIdAndConversationId(@Param("messageId") Long messageId, @Param("conversationId") Long conversationId);
@@ -105,7 +105,7 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             "  AND m.message_id NOT IN (SELECT mus.message_id \n" +
             "  FROM message_user_setting mus WHERE mus.user_id = :userId AND mus.conversation_id = :conversationId AND mus.hidden = true) \n" +
             "ORDER BY m.created_at DESC", nativeQuery = true)
-    Set<Message> findMessagesAfterArchiveAndBeforeLeftForFilter(@Param("userId") Long userId, @Param("conversationId") Long conversationId);
+    Set<Message> findArchivedMessagesBeforeLeftForFilter(@Param("userId") Long userId, @Param("conversationId") Long conversationId);
 
     @Query(value = "SELECT m.* \n" +
             "FROM message m\n" +

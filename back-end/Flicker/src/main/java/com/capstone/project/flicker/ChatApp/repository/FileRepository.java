@@ -28,6 +28,26 @@ public interface FileRepository extends JpaRepository<File, Long> {
             "ORDER BY f.created_at DESC", nativeQuery = true)
     public Page<File> findDocsInConversation(Pageable pageable, @Param("conversationId") Long conversationId, @Param("userId") Long userId);
 
+    @Query(value = "SELECT f.* FROM file f " +
+            "JOIN archived_conversation ac ON f.conversation = ac.conversation_id AND ac.user_id = :userId\n" +
+            "LEFT JOIN conversation_user_setting cus ON f.conversation = cus.conversation_id AND cus.user_id = :userId " +
+            "WHERE f.conversation = :conversationId AND f.content_type LIKE '%application%' " +
+            "AND f.created_at <= ac.updated_at\n" +
+            "AND (cus.date_joined IS NULL OR f.created_at >= cus.date_joined) " +
+            "AND (cus.date_left IS NULL OR f.created_at <= cus.date_left) " +
+            "ORDER BY f.created_at DESC", nativeQuery = true)
+    public Page<File> findArchivedDocsInConversation(Pageable pageable, @Param("conversationId") Long conversationId, @Param("userId") Long userId);
+
+    @Query(value = "SELECT f.* FROM file f " +
+            "JOIN archived_conversation ac ON f.conversation = ac.conversation_id AND ac.user_id = :userId\n" +
+            "LEFT JOIN conversation_user_setting cus ON f.conversation = cus.conversation_id AND cus.user_id = :userId " +
+            "WHERE f.conversation = :conversationId AND f.content_type LIKE '%application%' " +
+            "  AND f.created_at > ac.updated_at\n" +
+            "AND (cus.date_joined IS NULL OR f.created_at >= cus.date_joined) " +
+            "AND (cus.date_left IS NULL OR f.created_at <= cus.date_left) " +
+            "ORDER BY f.created_at DESC", nativeQuery = true)
+    public Page<File> findNonArchivedDocsInConversation(Pageable pageable, @Param("conversationId") Long conversationId, @Param("userId") Long userId);
+
     /*@Query(value = "SELECT f.* FROM file f WHERE f.conversation = :conversationId AND f.content_type NOT LIKE '%application%' ORDER BY f.created_at DESC", nativeQuery = true)
     public Page<File> findMediaInConversation(Pageable pageable, @Param("conversationId") Long conversationId);*/
 
@@ -38,5 +58,25 @@ public interface FileRepository extends JpaRepository<File, Long> {
             "AND (cus.date_left IS NULL OR f.created_at <= cus.date_left) " +
             "ORDER BY f.created_at DESC", nativeQuery = true)
     public Page<File> findMediaInConversation(Pageable pageable, @Param("conversationId") Long conversationId, @Param("userId") Long userId);
+
+    @Query(value = "SELECT f.* FROM file f " +
+            "JOIN archived_conversation ac ON f.conversation = ac.conversation_id AND ac.user_id = :userId\n" +
+            "LEFT JOIN conversation_user_setting cus ON f.conversation = cus.conversation_id AND cus.user_id = :userId " +
+            "WHERE f.conversation = :conversationId AND f.content_type NOT LIKE '%application%' " +
+            "AND f.created_at <= ac.updated_at\n" +
+            "AND (cus.date_joined IS NULL OR f.created_at >= cus.date_joined) " +
+            "AND (cus.date_left IS NULL OR f.created_at <= cus.date_left) " +
+            "ORDER BY f.created_at DESC", nativeQuery = true)
+    public Page<File> findArchivedMediaInConversation(Pageable pageable, @Param("conversationId") Long conversationId, @Param("userId") Long userId);
+
+    @Query(value = "SELECT f.* FROM file f " +
+            "JOIN archived_conversation ac ON f.conversation = ac.conversation_id AND ac.user_id = :userId\n" +
+            "LEFT JOIN conversation_user_setting cus ON f.conversation = cus.conversation_id AND cus.user_id = :userId " +
+            "WHERE f.conversation = :conversationId AND f.content_type NOT LIKE '%application%' " +
+            "AND f.created_at > ac.updated_at\n" +
+            "AND (cus.date_joined IS NULL OR f.created_at >= cus.date_joined) " +
+            "AND (cus.date_left IS NULL OR f.created_at <= cus.date_left) " +
+            "ORDER BY f.created_at DESC", nativeQuery = true)
+    public Page<File> findNonArchivedMediaInConversation(Pageable pageable, @Param("conversationId") Long conversationId, @Param("userId") Long userId);
 
 }

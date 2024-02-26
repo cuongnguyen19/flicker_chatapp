@@ -54,9 +54,33 @@ export const getConversationMedia = async (
   }
 };
 
+export const getArchivedConversationMedia = async (
+    conversationId: number,
+    page?: number,
+    size?: number
+) => {
+  try {
+    return await axiosCaller(
+        `/conversation/media/get/archived/${conversationId}`,
+        "GET",
+        {},
+        { page, size }
+    );
+  } catch (e) {
+    throw e;
+  }
+};
 export const getConversationDocs = async (conversationId: number, page?: number, size?: number) => {
   try {
     return await axiosCaller(`/conversation/docs/get/${conversationId}`, "GET", {}, { page, size });
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const getArchivedConversationDocs = async (conversationId: number, page?: number, size?: number) => {
+  try {
+    return await axiosCaller(`/conversation/docs/get/archived/${conversationId}`, "GET", {}, { page, size });
   } catch (e) {
     throw e;
   }
@@ -188,6 +212,14 @@ export const archiveConversation = async (conversationId: number, password: stri
 export const unarchiveConversation = async (conversationId: number) => {
   try {
     return await axiosCaller(`/conversation/unarchive/${conversationId}`, "DELETE");
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const removeConversation = async (conversationId: number) => {
+  try {
+    return await axiosCaller(`/conversation/remove/${conversationId}`, "DELETE");
   } catch (e) {
     throw e;
   }

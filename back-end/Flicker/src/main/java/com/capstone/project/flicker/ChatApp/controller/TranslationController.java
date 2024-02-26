@@ -22,8 +22,8 @@ public class TranslationController {
 
     @PostMapping
     public ResponseEntity<String> translateText(@RequestBody TranslationRequest request) throws JsonProcessingException {
-        //String translatedText = translationService.translate(request.getText(), request.getTargetLanguage());
-        String translatedText = translationService.generateText(request);
+        String translatedText = translationService.translate(request.getText(), request.getTargetLanguage());
+        //String translatedText = translationService.generateText(request);
         return ResponseEntity.ok(translatedText);
     }
 

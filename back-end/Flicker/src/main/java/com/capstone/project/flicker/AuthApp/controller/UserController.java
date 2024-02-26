@@ -246,13 +246,13 @@ public class UserController {
 
     @PutMapping("/archivedPass/set")
     @PreAuthorize("hasRole('USER')")
-    @Operation(summary = "Set hidden conversation password")
+    @Operation(summary = "Set archived conversation password")
     public ResponseEntity<UserDTO> setArchivedConversationPassword(@CurrentUser CustomUserDetails currentUser, @RequestBody SetConversationPasswordRequest request) {
         return ResponseEntity.ok(userService.setArchivedConversationPassword(currentUser.getId(), request));
     }
     @GetMapping("/archivedPass/check")
     @PreAuthorize("hasRole('USER')")
-    @Operation(summary = "Checks hidden conversation password status")
+    @Operation(summary = "Checks archived conversation password status")
     public ResponseEntity<Boolean> checkArchivedConversationPassStatus(@CurrentUser CustomUserDetails currentUser) {
         return ResponseEntity.ok(userService.checkArchivedConversationPassStatus(currentUser.getId()));
     }
@@ -265,7 +265,7 @@ public class UserController {
     }
     @PutMapping("/archivedPass/update")
     @PreAuthorize("hasRole('USER')")
-    @Operation(summary = "Updates hidden conversation password")
+    @Operation(summary = "Updates archived conversation password")
     public ResponseEntity<UserDTO> updateArchivedConversationPassword(@CurrentUser CustomUserDetails currentUser,
                                                                     @Param(value = "The UpdatePasswordRequest payload") @Valid @RequestBody UpdatePasswordRequest request) {
         return ResponseEntity.ok(userService.updateArchivedConversationPassword(currentUser.getId(), request));

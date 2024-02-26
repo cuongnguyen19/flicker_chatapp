@@ -230,7 +230,7 @@ public class MessageService {
                 Page<MessageDTO> messageList = messages.map(message -> modelMapper.map(message, MessageDTO.class));
                 return messageList;
             } else {
-                Page<Message> messages = messageRepository.findMessagesAfterArchiveAndBeforeLeft(pageable, userId, conversationId);
+                Page<Message> messages = messageRepository.findArchivedMessagesBeforeLeft(pageable, userId, conversationId);
                 Page<MessageDTO> messageList = messages.map(message -> modelMapper.map(message, MessageDTO.class));
                 return messageList;
             }
@@ -248,7 +248,7 @@ public class MessageService {
                 Set<MessageDTO> messageList = messages.stream().map(message -> modelMapper.map(message, MessageDTO.class)).collect(Collectors.toSet());
                 return messageList;
             } else {
-                Set<Message> messages = messageRepository.findMessagesAfterArchiveAndBeforeLeftForFilter(userId, conversationId);
+                Set<Message> messages = messageRepository.findArchivedMessagesBeforeLeftForFilter(userId, conversationId);
                 Set<MessageDTO> messageList = messages.stream().map(message -> modelMapper.map(message, MessageDTO.class)).collect(Collectors.toSet());
                 return messageList;
             }

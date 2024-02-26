@@ -277,6 +277,15 @@ public class ConversationController {
         return ResponseEntity.ok(conversationService.getMediaInConversation(currentUser.getId(), conversationId, pageable));
     }
 
+    @GetMapping(path = "/media/get/archived/{conversationId}")
+    public ResponseEntity<Page<File>> getArchivedMediaInConversation(@CurrentUser CustomUserDetails currentUser,
+                                                             @PathVariable Long conversationId,
+                                                             @RequestParam(defaultValue = "0") int page,
+                                                             @RequestParam(defaultValue = "10") int size) throws Exception {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(conversationService.getArchivedMediaInConversation(currentUser.getId(), conversationId, pageable));
+    }
+
     @GetMapping(path = "/docs/get/{conversationId}")
     public ResponseEntity<Page<File>> getDocsInConversation(@CurrentUser CustomUserDetails currentUser,
                                                              @PathVariable Long conversationId,
@@ -284,6 +293,15 @@ public class ConversationController {
                                                              @RequestParam(defaultValue = "10") int size) throws Exception {
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(conversationService.getDocsInConversation(currentUser.getId(), conversationId, pageable));
+    }
+
+    @GetMapping(path = "/docs/get/archived/{conversationId}")
+    public ResponseEntity<Page<File>> getArchivedDocsInConversation(@CurrentUser CustomUserDetails currentUser,
+                                                            @PathVariable Long conversationId,
+                                                            @RequestParam(defaultValue = "0") int page,
+                                                            @RequestParam(defaultValue = "10") int size) throws Exception {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(conversationService.getArchivedDocsInConversation(currentUser.getId(), conversationId, pageable));
     }
 
     @GetMapping(path = "/get/users-unseen/{messageId}/{conversationId}")

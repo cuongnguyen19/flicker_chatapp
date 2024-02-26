@@ -14,6 +14,7 @@ import { MessageInstance } from "antd/es/message/interface";
 import { User } from "@/redux/slices/user";
 
 import ConfirmHideConversationModal from "@/app/chat/[id]/confirmHideConversationModal";
+import ConfirmDeleteConversationModal from "@/app/chat/[id]/confirmDeleteConversationModal";
 import ConfirmArchiveConversationModal from "@/app/chat/[id]/confirmArchiveConversationModal";
 import ConfirmUnhideConversationModal from "@/app/chat/[id]/confirmUnhideConversationModal";
 import {checkHiddenPassStatus, checkArchivedPassStatus} from "@/shared/APIs/userAPI";
@@ -160,6 +161,15 @@ const conversationContextMenu = ({ children, language, isHidden, message, user, 
                 conversation={conversation}
                 messageApi={messageApi}
                 dispatch={dispatch}
+            />
+
+            <ConfirmDeleteConversationModal
+                open={openDelete}
+                onCancel={() => setOpenDelete(false)}
+                conversation={conversation}
+                messageApi={messageApi}
+                dispatch={dispatch}
+                isHiddenPass={hiddenPassStatus}
             />
 
             <Dropdown menu={{ items, onClick: handleMenuClick }} trigger={["contextMenu"]} disabled={disabled}>

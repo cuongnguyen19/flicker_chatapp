@@ -79,12 +79,8 @@ m
 =src/app/chat/[id]/changeArchivedConversationPasswordModal.tsx,0/c/0cd8b78acf8ca932c6bea5d698496563a98b0e1d
 l
 <src/app/chat/[id]/resetArchivedConversationPasswordModal.tsx,3/9/393b354a1b888df090aee38aa6195aaff6718e79
-b
-2src/app/chat/[id]/confirmHideConversationModal.tsx,9/4/94a79686a2dc73615f6706dede837970e914f574
 l
 <src/app/archivedChat/[id]/confirmUnhideConversationModal.tsx,2/2/2268a771a6643fef96dea3cb0760fc903913410a
-]
--src/app/chat/[id]/conversationContextMenu.tsx,d/e/de811bb61bf22f9bc7abb80b6a479bac649e0e7d
 ?
 public/chat.svg,d/4/d4899ff89f970229ea83665ef65eef3c7299345f
 o
@@ -97,3 +93,17 @@ M
 src/app/archivedChat/page.tsx,c/8/c8dbf577a3e3413de199910dd92132ecbeef647c
 O
 src/app/archivedChat/layout.tsx,3/c/3ced66cdf860abe9a386a459f7bdca7d2d13d1ca
+Q
+!src/app/archivedChat/chatItem.tsx,3/9/39c2b2cb3901483014a5257a25975f1c4d052a2c
+I
+src/app/chat/chatItem.tsx,5/b/5bd5971c5913691648792e5ac8a69aeeebe81854
+P
+ src/redux/slices/archivedChat.ts,0/f/0f6e33d9c46155c59c5ee560cbd1669e7bcf85e7
+W
+'src/shared/components/router/router.tsx,0/4/04696216cddd8a672242a6624da619a35b37c9d6
+E
+src/app/chat/page.tsx,f/7/f78badc5ecf8821bdebf860c4f2af47c29d1ff2d
+R
+"src/app/archivedChat/[id]/page.tsx,4/7/473eb84528bd61efade6754cc0a39f5abae83220
+e
+5src/app/archivedChat/[id]/conversationContextMenu.tsx,9/c/9c4f00c4d56a6dc3d64c06f9589d321b8e1fcfb6
