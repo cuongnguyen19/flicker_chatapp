@@ -118,5 +118,5 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
             "  AND m.message_id NOT IN (SELECT mus.message_id \n" +
             "  FROM message_user_setting mus WHERE mus.user_id = :userId AND mus.conversation_id = :conversationId AND (mus.archived = false OR mus.hidden = true)) \n" +
             "ORDER BY m.created_at DESC", nativeQuery = true)
-    Set<Message> findMessagesBeforeArchiveAndBeforeLeftForFilter(@Param("userId") Long userId, @Param("conversationId") Long conversationId);
+    Set<Message> findArchivedMessagesBeforeLeftForFilter(@Param("userId") Long userId, @Param("conversationId") Long conversationId);
 }

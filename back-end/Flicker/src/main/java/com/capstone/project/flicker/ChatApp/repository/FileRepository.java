@@ -17,9 +17,7 @@ public interface FileRepository extends JpaRepository<File, Long> {
     Optional<File> findByUrl(String url);
     @Query(value = "SELECT f.* FROM file f WHERE f.conversation = :conversationId ORDER BY f.created_at DESC", nativeQuery = true)
     public Page<File> findAllInConversation(Pageable pageable, @Param("conversationId") Long conversationId);
-   /* @Query(value = "SELECT f.* FROM file f WHERE f.conversation = :conversationId AND f.content_type LIKE '%application%' ORDER BY f.created_at DESC", nativeQuery = true)
-    public Page<File> findDocsInConversation(Pageable pageable, @Param("conversationId") Long conversationId);
-*/
+
     @Query(value = "SELECT f.* FROM file f " +
             "JOIN conversation_user_setting cus ON f.conversation = cus.conversation_id AND cus.user_id = :userId " +
             "WHERE f.conversation = :conversationId AND f.content_type LIKE '%application%' " +
@@ -51,9 +49,6 @@ public interface FileRepository extends JpaRepository<File, Long> {
             "  FROM message_user_setting mus WHERE mus.user_id = :userId AND mus.conversation_id = :conversationId AND (mus.archived = true OR mus.hidden = true)) \n" +
             "ORDER BY f.created_at DESC", nativeQuery = true)
     public Page<File> findNonArchivedDocsInConversation(Pageable pageable, @Param("conversationId") Long conversationId, @Param("userId") Long userId);
-
-    /*@Query(value = "SELECT f.* FROM file f WHERE f.conversation = :conversationId AND f.content_type NOT LIKE '%application%' ORDER BY f.created_at DESC", nativeQuery = true)
-    public Page<File> findMediaInConversation(Pageable pageable, @Param("conversationId") Long conversationId);*/
 
     @Query(value = "SELECT f.* FROM file f " +
             "JOIN conversation_user_setting cus ON f.conversation = cus.conversation_id AND cus.user_id = :userId " +

@@ -265,7 +265,7 @@ public class MessageService {
             if (!archivedConversation.isPresent()) {
                 throw new IllegalArgumentException("Archived conversation not found for conversation id: " + conversationId);
             } else {
-                Set<Message> messages = messageRepository.findMessagesBeforeArchiveAndBeforeLeftForFilter(userId, conversationId);
+                Set<Message> messages = messageRepository.findArchivedMessagesBeforeLeftForFilter(userId, conversationId);
                 Set<MessageDTO> messageList = messages.stream().map(message -> modelMapper.map(message, MessageDTO.class)).collect(Collectors.toSet());
                 return messageList;
             }
