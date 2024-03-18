@@ -46,4 +46,7 @@ public class MessageUserSetting extends DateAudit {
 
     @Column(name = "HIDDEN")
     private Boolean hidden;
+
+    @Column(name = "ARCHIVED")
+    private Boolean archived;
 }

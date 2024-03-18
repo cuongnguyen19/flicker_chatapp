@@ -29,7 +29,8 @@ const Navbar = ({dispatch, messageApi}: Props) => {
     if (pathName.startsWith("/chat")) setActive(1);
     else if (pathName.startsWith("/contact")) setActive(2);
     else if (pathName.startsWith("/setting")) setActive(3);
-    else setActive(4);
+    else if (pathName.startsWith("/archivedChat")) setActive(4);
+    else setActive(5);
     setShouldRender(true);
   }, [pathName]);
 
@@ -60,29 +61,18 @@ const Navbar = ({dispatch, messageApi}: Props) => {
             <Image src={chat} alt="chat" />
           </button>
         </Link>
-
-
-
-
-
-
-              <button
-                  className={`${
-                      active === 4 ? "bg-transparent" : "hover:bg-gray-200"
-                  } flex justify-center items-center w-full h-12 rounded-xl duration-500`}
-                  disabled={active === 4}
-                  onClick={() => {
-                      setActive(4);
-                      setOpenArchive(true);
-                  }}
-              >
-                  <RestOutlined/>
-              </button>
-
-
-
-
-
+          <button
+              className={`${
+                  active === 4 ? "bg-transparent" : "hover:bg-gray-200"
+              } flex justify-center items-center w-full h-12 rounded-xl duration-500`}
+              disabled={active === 4}
+              onClick={() => {
+                  setActive(4);
+                  setOpenArchive(true);
+              }}
+          >
+              <RestOutlined/>
+          </button>
         <Link href="/contact" className="my-4">
           <button
             className={`${

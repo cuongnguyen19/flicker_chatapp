@@ -49,7 +49,7 @@ public class TranslationService {
                 return translation.getTranslatedText();
             }
         } catch (Exception e) {
-            throw new RuntimeException("Failed to translate text", e);
+            throw new RuntimeException("Failed to translate text with exception: ", e);
         }
     }
 

@@ -35,6 +35,8 @@ public interface FileRepository extends JpaRepository<File, Long> {
             "AND f.created_at <= ac.updated_at\n" +
             "AND (cus.date_joined IS NULL OR f.created_at >= cus.date_joined) " +
             "AND (cus.date_left IS NULL OR f.created_at <= cus.date_left) " +
+            "  AND f.message NOT IN (SELECT mus.message_id \n" +
+            "  FROM message_user_setting mus WHERE mus.user_id = :userId AND mus.conversation_id = :conversationId AND (mus.archived = false OR mus.hidden = true)) \n" +
             "ORDER BY f.created_at DESC", nativeQuery = true)
     public Page<File> findArchivedDocsInConversation(Pageable pageable, @Param("conversationId") Long conversationId, @Param("userId") Long userId);
 
@@ -45,6 +47,8 @@ public interface FileRepository extends JpaRepository<File, Long> {
             "  AND f.created_at > ac.updated_at\n" +
             "AND (cus.date_joined IS NULL OR f.created_at >= cus.date_joined) " +
             "AND (cus.date_left IS NULL OR f.created_at <= cus.date_left) " +
+            "  AND f.message NOT IN (SELECT mus.message_id \n" +
+            "  FROM message_user_setting mus WHERE mus.user_id = :userId AND mus.conversation_id = :conversationId AND (mus.archived = true OR mus.hidden = true)) \n" +
             "ORDER BY f.created_at DESC", nativeQuery = true)
     public Page<File> findNonArchivedDocsInConversation(Pageable pageable, @Param("conversationId") Long conversationId, @Param("userId") Long userId);
 
@@ -66,6 +70,8 @@ public interface FileRepository extends JpaRepository<File, Long> {
             "AND f.created_at <= ac.updated_at\n" +
             "AND (cus.date_joined IS NULL OR f.created_at >= cus.date_joined) " +
             "AND (cus.date_left IS NULL OR f.created_at <= cus.date_left) " +
+            "  AND f.message NOT IN (SELECT mus.message_id \n" +
+            "  FROM message_user_setting mus WHERE mus.user_id = :userId AND mus.conversation_id = :conversationId AND (mus.archived = false OR mus.hidden = true)) \n" +
             "ORDER BY f.created_at DESC", nativeQuery = true)
     public Page<File> findArchivedMediaInConversation(Pageable pageable, @Param("conversationId") Long conversationId, @Param("userId") Long userId);
 
@@ -76,6 +82,8 @@ public interface FileRepository extends JpaRepository<File, Long> {
             "AND f.created_at > ac.updated_at\n" +
             "AND (cus.date_joined IS NULL OR f.created_at >= cus.date_joined) " +
             "AND (cus.date_left IS NULL OR f.created_at <= cus.date_left) " +
+            "  AND f.message NOT IN (SELECT mus.message_id \n" +
+            "  FROM message_user_setting mus WHERE mus.user_id = :userId AND mus.conversation_id = :conversationId AND (mus.archived = true OR mus.hidden = true)) \n" +
             "ORDER BY f.created_at DESC", nativeQuery = true)
     public Page<File> findNonArchivedMediaInConversation(Pageable pageable, @Param("conversationId") Long conversationId, @Param("userId") Long userId);
 

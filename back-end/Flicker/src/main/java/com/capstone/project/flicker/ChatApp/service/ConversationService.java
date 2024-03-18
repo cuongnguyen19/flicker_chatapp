@@ -63,10 +63,10 @@ public class ConversationService {
         return conversationRepository.findNonArchivedConversationsForUser(userId);
     }
 
-    public Set<Conversation> getArchivedConversations(Long userId, Boolean isRemoved) {
+    public Set<Conversation> getArchivedConversations(Long userId) {
         User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
         //return conversationRepository.findArchivedConversationsForUser(userId, isRemoved);
-        return conversationRepository.findArchivedConversationsForUserAfterLeft(userId, isRemoved);
+        return conversationRepository.findArchivedConversationsForUserAfterLeft(userId);
     }
 
     public Set<Conversation> getNonHiddenConversations(Long userId) {
@@ -85,7 +85,7 @@ public class ConversationService {
                 return messages.getContent().size() >= 1;
             }
             else {
-                Page<Message> messages = messageRepository.findArchivedMessagesBeforeLeft(pageable, userId, c.getId());
+                Page<Message> messages = messageRepository.findNonArchivedMessagesBeforeLeft(pageable, userId, c.getId());
                 return messages.getContent().size() >= 1;
             }
 
@@ -135,6 +135,31 @@ public class ConversationService {
         }
         Set<Conversation> nonHiddenConversations = getNonHiddenConversations(userId);
         Set<Conversation> filteredConversations = nonHiddenConversations.stream()
+                .filter(c -> {
+                    if(c.getIsGroup()) {
+                        if (c.getConversationName() != null)
+                            return c.getConversationName().toLowerCase().contains(query.toLowerCase());
+                        else
+                            return false;
+                    }
+                    else {
+                        Set<User> filteredUsers = c.getUsers().stream().filter(u -> u.getDisplayName().toLowerCase().contains(query.toLowerCase()) && !u.getDisplayName().equalsIgnoreCase(user.getDisplayName())).collect(Collectors.toSet());
+                        return filteredUsers.size() > 0;
+                    }
+                })
+                .collect(Collectors.toSet());
+        Set<Conversation> sortedConversations = new TreeSet<>(
+                Comparator.comparing(Conversation::getUpdatedAt).reversed()
+        );
+
+        sortedConversations.addAll(filteredConversations);
+        return sortedConversations;
+    }
+
+    public Set<Conversation> getArchivedConversationsByName(Long userId, String query) {
+        User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        Set<Conversation> archivedConversations = getArchivedConversations(userId);
+        Set<Conversation> filteredConversations = archivedConversations.stream()
                 .filter(c -> {
                     if(c.getIsGroup()) {
                         if (c.getConversationName() != null)
@@ -587,6 +612,13 @@ public class ConversationService {
             throw new IllegalArgumentException("Wrong password");
         Optional<ArchivedConversation> archivedConversation = archivedConversationService.findByUserIdAndConversationId(userId, conversationId);
         Conversation conversation = conversationRepository.findById(conversationId).orElseThrow( () -> new IllegalArgumentException("Conversation not found for id: " + conversationId));
+        Set<MessageUserSetting> messageUserSettings = messageUserSettingService.findByUserIdAndConversationIdAndHidden(userId, conversationId, false);
+        messageUserSettings.forEach(mus -> {
+            if(mus.getArchived() == null || !mus.getArchived()) {
+                mus.setArchived(true);
+                messageUserSettingService.save(mus);
+            }
+        });
 
         if (!archivedConversation.isPresent()) {
             ArchivedConversation newArchivedConversation = ArchivedConversation.builder()
@@ -606,6 +638,12 @@ public class ConversationService {
     public Boolean unarchiveConversation(Long userId, Long conversationId) {
         Optional<ArchivedConversation> archivedConversation = archivedConversationService.findByUserIdAndConversationId(userId, conversationId);
         if(archivedConversation.isPresent()) {
+            Set<MessageUserSetting> messageUserSettings = messageUserSettingService.findByUserIdAndConversationIdAndHiddenAndArchived(userId, conversationId, false, true);
+            messageUserSettings.forEach(mus -> {
+                mus.setArchived(false);
+                messageUserSettingService.save(mus);
+
+            });
             archivedConversationService.delete(archivedConversation.get());
             return true;
         }
@@ -618,12 +656,18 @@ public class ConversationService {
         return archivedConversationService.save(archivedConversation);
     }
 
-    public ArchivedConversation removeConversation(Long userId, Long conversationId) {
+    public Boolean deleteConversation(Long userId, Long conversationId) {
         User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
         Optional<ArchivedConversation> archivedConversation = archivedConversationService.findByUserIdAndConversationId(userId, conversationId);
         Conversation conversation = conversationRepository.findById(conversationId).orElseThrow( () -> new IllegalArgumentException("Conversation not found for id: " + conversationId));
+        Set<MessageUserSetting> messageUserSettings = messageUserSettingService.findByUserIdAndConversationIdAndHiddenAndArchived(userId, conversationId, false, false);
+        messageUserSettings.forEach(mus -> {
+            mus.setHidden(true);
+            messageUserSettingService.save(mus);
+        });
+        return true;
 
-        if (!archivedConversation.isPresent()) {
+        /*if (!archivedConversation.isPresent()) {
             ArchivedConversation newArchivedConversation = ArchivedConversation.builder()
                     .user(user)
                     .conversation(conversation)
@@ -636,7 +680,7 @@ public class ConversationService {
             existingArchivedConversation.setIsRemoved(true);
             existingArchivedConversation.setUpdatedAt(Instant.now());
             return archivedConversationService.save(existingArchivedConversation);
-        }
+        }*/
     }
 
     public HiddenConversation hideConversation(Long userId, Long conversationId, HiddenConversationRequest request) {

@@ -68,6 +68,17 @@ public class ConversationController {
         return ResponseEntity.ok(pagesOfConversations);
     }
 
+    @GetMapping(path = "/search/archived", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Page<Conversation>> searchArchivedConversations(@CurrentUser CustomUserDetails currentUser,
+                                                                  @RequestParam String query,
+                                                                  @RequestParam(defaultValue = "0") int page,
+                                                                  @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Set<Conversation> conversations = conversationService.getArchivedConversationsByName(currentUser.getId(), query);
+        Page<Conversation> pagesOfConversations = conversationService.getPagesOfConversations(conversations, pageable);
+        return ResponseEntity.ok(pagesOfConversations);
+    }
+
     @GetMapping(path = "/get/non-archived", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<Conversation>> getNonArchivedConversations(@CurrentUser CustomUserDetails currentUser,
                                                               @RequestParam(defaultValue = "0") int page,
@@ -83,7 +94,7 @@ public class ConversationController {
                                                                           @RequestParam(defaultValue = "0") int page,
                                                                           @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Set<Conversation> archivedConversations = conversationService.getArchivedConversations(currentUser.getId(), false);
+        Set<Conversation> archivedConversations = conversationService.getArchivedConversations(currentUser.getId());
         Page<Conversation> pagesOfArchivedConversations = conversationService.getPagesOfConversations(archivedConversations, pageable);
         return ResponseEntity.ok(pagesOfArchivedConversations);
     }
@@ -227,9 +238,9 @@ public class ConversationController {
         return ResponseEntity.ok(conversationService.markRemovedArchivedConversation(archivedConversationId));
     }
 
-    @DeleteMapping(path = "/remove/{conversationId}")
-    public ResponseEntity<?> removeConversation(@CurrentUser CustomUserDetails currentUser, @PathVariable Long conversationId) {
-        return ResponseEntity.ok(conversationService.removeConversation(currentUser.getId(), conversationId));
+    @DeleteMapping(path = "/delete/{conversationId}")
+    public ResponseEntity<?> deleteConversation(@CurrentUser CustomUserDetails currentUser, @PathVariable Long conversationId) {
+        return ResponseEntity.ok(conversationService.deleteConversation(currentUser.getId(), conversationId));
     }
 
     @PostMapping(path = "/hide/{conversationId}")

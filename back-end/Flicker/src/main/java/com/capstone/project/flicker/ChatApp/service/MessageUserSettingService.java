@@ -33,6 +33,17 @@ public class MessageUserSettingService {
         return messageUserSettingRepository.findByUserIdAndMessageIdAndConversationId(userId, messageId, conversationId);
     }
 
+    public Set<MessageUserSetting> findByUserIdAndConversationIdAndHiddenAndArchived(Long userId, Long conversationId, Boolean hidden, Boolean archived) {
+        return messageUserSettingRepository.findByUserIdAndConversationIdAndHiddenAndArchived(userId, conversationId, hidden, archived);
+    }
+
+    public Set<MessageUserSetting> findByUserIdAndConversationIdAndHidden(Long userId, Long conversationId, Boolean hidden) {
+        return messageUserSettingRepository.findByUserIdAndConversationIdAndHidden(userId, conversationId, hidden);
+    }
+
+    public Set<MessageUserSetting> findByUserIdAndConversationIdAndArchived(Long userId, Long conversationId, Boolean archived) {
+        return messageUserSettingRepository.findByUserIdAndConversationIdAndArchived(userId, conversationId, archived);
+    }
     public MessageUserSetting save(MessageUserSetting mus) {
         return messageUserSettingRepository.save(mus);
     }

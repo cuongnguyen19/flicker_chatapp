@@ -21,6 +21,19 @@ export const searchConversations = async (query: string, page?: number, size?: n
   }
 };
 
+export const searchArchivedConversations = async (query: string, page?: number, size?: number) => {
+  try {
+    return await axiosCaller(
+        "/conversation/search/archived",
+        "GET",
+        {},
+        { query: query ? query : "''", page, size }
+    );
+  } catch (e) {
+    throw e;
+  }
+};
+
 export const createPrivateChat = async (userId2: number) => {
   try {
     return await axiosCaller("/conversation/create/private-chat", "POST", {}, { userId2 });
@@ -204,6 +217,14 @@ export const getArchivedConversations = async (page?: number, size?: number) => 
 export const archiveConversation = async (conversationId: number, password: string) => {
   try {
     return await axiosCaller(`/conversation/archive/${conversationId}`, "POST", {password});
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const deleteConversation = async (conversationId: number) => {
+  try {
+    return await axiosCaller(`/conversation/delete/${conversationId}`, "DELETE");
   } catch (e) {
     throw e;
   }

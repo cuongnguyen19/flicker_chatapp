@@ -86,6 +86,7 @@ public class MessageService {
                     .message(savedMessage)
                     .conversation(conversation)
                     .status(Message.Status.RECEIVED)
+                    .archived(false)
                     .hidden(false)
                     .build();
             messageUserSettingService.save(mus);
@@ -230,7 +231,7 @@ public class MessageService {
                 Page<MessageDTO> messageList = messages.map(message -> modelMapper.map(message, MessageDTO.class));
                 return messageList;
             } else {
-                Page<Message> messages = messageRepository.findArchivedMessagesBeforeLeft(pageable, userId, conversationId);
+                Page<Message> messages = messageRepository.findNonArchivedMessagesBeforeLeft(pageable, userId, conversationId);
                 Page<MessageDTO> messageList = messages.map(message -> modelMapper.map(message, MessageDTO.class));
                 return messageList;
             }
@@ -248,7 +249,7 @@ public class MessageService {
                 Set<MessageDTO> messageList = messages.stream().map(message -> modelMapper.map(message, MessageDTO.class)).collect(Collectors.toSet());
                 return messageList;
             } else {
-                Set<Message> messages = messageRepository.findArchivedMessagesBeforeLeftForFilter(userId, conversationId);
+                Set<Message> messages = messageRepository.findNonArchivedMessagesBeforeLeftForFilter(userId, conversationId);
                 Set<MessageDTO> messageList = messages.stream().map(message -> modelMapper.map(message, MessageDTO.class)).collect(Collectors.toSet());
                 return messageList;
             }
@@ -272,10 +273,10 @@ public class MessageService {
         return null;
     }
 
-    public Page<MessageDTO> getArchivedMessages(Long userId, Long archivedConversationId, Pageable pageable) {
+    public Page<MessageDTO> getArchivedMessages(Long userId, Long conversationId, Pageable pageable) {
         User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
         //ArchivedConversation archivedConversation = archivedConversationService.findByIdAndIsRemoved(archivedConversationId, false).orElseThrow(() -> new IllegalArgumentException("Archived conversation not found for id: " + archivedConversationId + " Or it has been removed"));
-        Page<Message> messages = messageRepository.findMessagesBeforeArchiveAndBeforeLeft(pageable, userId, archivedConversationId);
+        Page<Message> messages = messageRepository.findArchivedMessagesBeforeLeft(pageable, userId, conversationId);
         Page<MessageDTO> messageList = messages.map(message -> modelMapper.map(message, MessageDTO.class));
         return messageList;
     }

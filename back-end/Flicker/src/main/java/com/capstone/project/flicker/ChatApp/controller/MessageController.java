@@ -153,13 +153,13 @@ public class MessageController {
         return ResponseEntity.ok(messageService.filteredMessages(messages, query, pageable));
     }*/
 
-    @GetMapping(path = "/get/archived/{archivedConversationId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(path = "/get/archived/{conversationId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<MessageDTO>> getArchivedMessages(@CurrentUser CustomUserDetails currentUser,
-                                                                @PathVariable("archivedConversationId") Long archivedConversationId,
+                                                                @PathVariable("conversationId") Long conversationId,
                                                                 @RequestParam(defaultValue = "0") int page,
                                                                 @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(messageService.getArchivedMessages(currentUser.getId(), archivedConversationId, pageable));
+        return ResponseEntity.ok(messageService.getArchivedMessages(currentUser.getId(), conversationId, pageable));
     }
 
    /* @GetMapping(path = "/search/archived/{conversationId}", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -10,23 +10,13 @@ import ChatItem from "./chatItem";
 import { User } from "@/redux/slices/user";
 import {
   Conversation,
-  addConversationAsyncAction,
-  addMessage,
-  changeConversationAvatar,
-  changeConversationName,
-  deleteMessage,
-  getConversationsAsyncAction,
   getArchivedConversationsAsyncAction,
-  resetState,
-  searchConversationsAsyncAction,
-  updateUsersInConversation,
+    searchArchivedConversationsAsyncAction,
 } from "@/redux/slices/chat";
 import { message } from "antd";
 import { Loader } from "@/shared/components/loader";
 import { Empty } from "@/shared/components/empty";
 import { Client, StompSubscription } from "@stomp/stompjs";
-import { getUserRoles } from "@/shared/APIs/conversationAPI";
-import { addNotification } from "@/redux/slices/notification";
 
 export const ClientContext = createContext<Client | null>(null);
 
@@ -52,7 +42,7 @@ const layout = ({ children, currentId, user, conversations, loading, dispatch }:
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (query === "") dispatch(getArchivedConversationsAsyncAction({ messageApi }));
-      else dispatch(searchConversationsAsyncAction({ messageApi, query }));
+      else dispatch(searchArchivedConversationsAsyncAction({ messageApi, query }));
     }, 0);
 
     return () => clearTimeout(delayDebounceFn);

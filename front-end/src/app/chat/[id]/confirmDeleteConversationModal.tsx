@@ -5,7 +5,7 @@ import { MessageInstance } from "antd/es/message/interface";
 import React, {useContext, useState} from "react";
 import { connect } from "react-redux";
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import {Conversation, hideConversationAsyncAction} from "@/redux/slices/chat";
+import {Conversation, deleteConversationAsyncAction} from "@/redux/slices/chat";
 import {useForm} from "antd/es/form/Form";
 import {setHiddenConversationPassword} from "@/shared/APIs/userAPI";
 import ChangeHiddenConversationPasswordModal from "./changeHiddenConversationPasswordModal";
@@ -34,7 +34,7 @@ const confirmDeleteConversationModal = ({ user, conversation, open, onCancel, me
     const onFinish = async (values: FieldType) => {
         try {
             setLoading(true);
-            dispatch(hideConversationAsyncAction({ messageApi, conversationId: conversation.id, password: values.password}));
+            dispatch(deleteConversationAsyncAction({ messageApi, conversationId: conversation.id, password: values.password}));
             //onCancel();
             form.resetFields();
         } catch (e: any) {
@@ -85,10 +85,10 @@ const confirmDeleteConversationModal = ({ user, conversation, open, onCancel, me
                     <Form.Item>
                         <div className="flex justify-around">
                             <Button htmlType="submit" type="primary" loading={loading}>
-                                Submit
+                                Yes
                             </Button>
                             <Button htmlType="reset" onClick={onCancel}>
-                                Cancel
+                                No
                             </Button>
                         </div>
                     </Form.Item>

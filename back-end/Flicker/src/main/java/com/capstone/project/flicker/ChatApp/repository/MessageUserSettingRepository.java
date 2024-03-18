@@ -19,4 +19,8 @@ public interface MessageUserSettingRepository extends JpaRepository<MessageUserS
     Optional<MessageUserSetting> findByUserIdAndMessageId(Long userId, Long messageId);
     Set<MessageUserSetting> findByMessageIdAndConversationId(Long messageId, Long conversationId);
     Optional<MessageUserSetting> findByUserIdAndMessageIdAndConversationId(Long userId, Long messageId, Long conversationId);
+    Set<MessageUserSetting> findByUserIdAndConversationIdAndHiddenAndArchived(Long userId, Long conversationId, Boolean hidden, Boolean archived);
+    Set<MessageUserSetting> findByUserIdAndConversationIdAndHidden(Long userId, Long conversationId, Boolean hidden);
+    Set<MessageUserSetting> findByUserIdAndConversationIdAndArchived(Long userId, Long conversationId, Boolean archived);
+
 }
