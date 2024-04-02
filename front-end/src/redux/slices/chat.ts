@@ -14,8 +14,8 @@ import {
   getUserRoles,
   searchConversations,
   searchArchivedConversations,
-  setConversationNotification,
   deleteConversation,
+    deleteArchivedConversation,
 } from "@/shared/APIs/conversationAPI";
 import {getMessages, hideMessage, markMessageAsSeen, getArchivedMessages} from "@/shared/APIs/messageAPI";
 import {hideConversation, unhideConversation, checkHiddenConversation, archiveConversation, unarchiveConversation} from "@/shared/APIs/conversationAPI";
@@ -899,6 +899,19 @@ const deleteConversationAsyncAction = createAsyncThunk(
     }
 );
 
+const deleteArchivedConversationAsyncAction = createAsyncThunk(
+    "Conversation/Delete",
+    async (data: { messageApi: MessageInstance; conversationId: number; password: string}, thunkAPI) => {
+      try {
+        await deleteArchivedConversation(data.conversationId);
+        thunkAPI.dispatch(concealConversation({conversationId: data.conversationId}));
+        data.messageApi.success("Delete conversation successfully");
+      } catch (e: any) {
+        data.messageApi.error(e.message);
+      }
+    }
+);
+
 const unarchiveConversationAsyncAction = createAsyncThunk(
     "Conversation/Unarchive",
     async (data: { messageApi: MessageInstance; conversationId: number;}, thunkAPI) => {
@@ -944,6 +957,7 @@ export {
   unarchiveConversationAsyncAction,
   checkArchivedConversationPass,
   deleteConversationAsyncAction,
+  deleteArchivedConversationAsyncAction,
 };
 
 export const {

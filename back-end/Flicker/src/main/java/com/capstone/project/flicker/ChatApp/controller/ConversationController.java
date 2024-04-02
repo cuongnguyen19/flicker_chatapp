@@ -233,9 +233,9 @@ public class ConversationController {
         return ResponseEntity.ok(conversationService.unarchiveConversation(currentUser.getId(), conversationId));
     }
 
-    @DeleteMapping(path = "/mark-removed/{archivedConversationId}")
-    public ResponseEntity<?> markRemovedArchivedConversations(@PathVariable Long archivedConversationId) {
-        return ResponseEntity.ok(conversationService.markRemovedArchivedConversation(archivedConversationId));
+    @DeleteMapping(path = "/delete/archived/{conversationId}")
+    public ResponseEntity<?> deleteArchivedConversations(@CurrentUser CustomUserDetails currentUser, @PathVariable Long conversationId) {
+        return ResponseEntity.ok(conversationService.deleteArchivedConversation(currentUser.getId(), conversationId));
     }
 
     @DeleteMapping(path = "/delete/{conversationId}")

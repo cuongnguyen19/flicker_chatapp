@@ -13,6 +13,9 @@ import {
 import AccessArchivedConversationsModal from "@/app/archivedChat/[id]/accessArchivedConversationsModal";
 import {AppDispatch} from "@/redux/store";
 import {MessageInstance} from "antd/es/message/interface";
+import {setState} from "@/redux/slices/router";
+import {useRouter} from "next/navigation";
+import {getUserProfileAsyncAction} from "@/redux/slices/user";
 
 type Props = {
     dispatch: AppDispatch;
@@ -24,15 +27,40 @@ const Navbar = ({dispatch, messageApi}: Props) => {
   const [active, setActive] = useState(1);
   const [shouldRender, setShouldRender] = useState(false);
   const [openArchive, setOpenArchive] = useState(false);
+    const router = useRouter();
 
   useEffect(() => {
-    if (pathName.startsWith("/chat")) setActive(1);
-    else if (pathName.startsWith("/contact")) setActive(2);
-    else if (pathName.startsWith("/setting")) setActive(3);
-    else if (pathName.startsWith("/archivedChat")) setActive(4);
-    else setActive(5);
+    if (pathName.startsWith("/chat")) {
+        setActive(1);
+        localStorage.removeItem("authorizedForArchived");
+    }
+    else if (pathName.startsWith("/contact")) {
+        setActive(2);
+        localStorage.removeItem("authorizedForArchived");
+    }
+    else if (pathName.startsWith("/setting")) {
+        setActive(3);
+        localStorage.removeItem("authorizedForArchived");
+    }
+    else if (pathName.startsWith("/archivedChat")) {
+        const authorized = localStorage.getItem("authorizedForArchived");
+        if(authorized !== "true") {
+            dispatch(setState({ from: pathName }));
+            router.push("/chat");
+            setOpenArchive(true);
+        }
+        else {
+            setActive(4);
+        }
+    }
+    else {
+        setActive(5);
+        localStorage.removeItem("authorizedForArchived");
+    }
     setShouldRender(true);
   }, [pathName]);
+
+
 
   return (
     shouldRender && (

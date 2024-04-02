@@ -5,33 +5,34 @@ import { MessageInstance } from "antd/es/message/interface";
 import React, {useContext, useState} from "react";
 import { connect } from "react-redux";
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import {Conversation, deleteArchivedConversationAsyncAction} from "@/redux/slices/chat";
 import {useForm} from "antd/es/form/Form";
-import {useRouter} from "next/navigation";
-import {checkArchivedPassMatch} from "@/shared/APIs/userAPI";
 
 type Props = {
+    user: User;
     open: boolean;
     onCancel: () => void;
-    dispatch: AppDispatch;
     messageApi: MessageInstance;
+    conversation: Conversation;
+    dispatch: AppDispatch;
+    isHiddenPass: boolean;
 };
 
 type FieldType = {
     password: string;
+    newPassword: string;
+    retypeNewPassword: string;
 };
 
-const accessArchivedConversationsModal = ({open, onCancel, dispatch, messageApi}: Props) => {
+const confirmDeleteConversationModal = ({ user, conversation, open, onCancel, messageApi, dispatch, isHiddenPass }: Props) => {
     const [loading, setLoading] = useState(false);
     const [form] = useForm<FieldType>();
-    const router = useRouter();
 
     const onFinish = async (values: FieldType) => {
         try {
             setLoading(true);
-            const response = await checkArchivedPassMatch(values.password);
-            localStorage.setItem("authorizedForArchived", "true");
-            router.push(`/archivedChat`);
-            onCancel();
+            dispatch(deleteArchivedConversationAsyncAction({ messageApi, conversationId: conversation.id, password: values.password}));
+            //onCancel();
             form.resetFields();
         } catch (e: any) {
             messageApi.error(e.message);
@@ -41,8 +42,6 @@ const accessArchivedConversationsModal = ({open, onCancel, dispatch, messageApi}
             form.resetFields();
         }
     };
-
-
     return (
         <ConfigProvider
             theme={{
@@ -51,6 +50,7 @@ const accessArchivedConversationsModal = ({open, onCancel, dispatch, messageApi}
                 },
             }}
         >
+
             <Modal
                 open={open}
                 onCancel={() => {
@@ -62,37 +62,30 @@ const accessArchivedConversationsModal = ({open, onCancel, dispatch, messageApi}
                 width={600}
                 title={
                     <div className="flex items-center">
-                        <ExclamationCircleOutlined style={{ color: 'orange' }} className="mr-2"  />
-                        <span>Confirm Access Archived Conversations</span>
+                        <ExclamationCircleOutlined style={{color: 'orange'}} className="mr-2"/>
+                        <span>Confirm Delete Conversation</span>
                     </div>
                 }
             >
-                <div className="text-2xl mt-8 pb-8 text-center text-main">You are about to access archived conversations</div>
+                <div className="text-2xl mt-8 pb-6 text-center text-main">Are you sure to delete this conversation? This action cannot be undone</div>
                 <Form
                     form={form}
-                    name="archivedConversations"
-                    style={{ width: 100 + "%" }}
+                    name="hideConversation"
+                    style={{width: 100 + "%"}}
                     onFinish={onFinish}
                     autoComplete="off"
                     layout="vertical"
                     disabled={loading}
                     requiredMark={false}
                 >
-                    <Form.Item<FieldType>
-                        label="Archived Conversations Password"
-                        name="password"
-                        rules={[{required: true, message: "Please input your password used for archived conversations"}]}
-                    >
-                        <Input placeholder="Type your password used for archived conversations" type="password"/>
-                    </Form.Item>
 
-                    <Form.Item className="mt-8">
+                    <Form.Item>
                         <div className="flex justify-around">
                             <Button htmlType="submit" type="primary" loading={loading}>
-                                Submit
+                                Yes
                             </Button>
                             <Button htmlType="reset" onClick={onCancel}>
-                                Cancel
+                                No
                             </Button>
                         </div>
                     </Form.Item>
@@ -100,10 +93,11 @@ const accessArchivedConversationsModal = ({open, onCancel, dispatch, messageApi}
             </Modal>
         </ConfigProvider>
     );
+
 };
 
 const mapState = ({ user }: RootState) => ({
     user: user,
 });
 
-export default connect(mapState)(accessArchivedConversationsModal);
+export default connect(mapState)(confirmDeleteConversationModal);

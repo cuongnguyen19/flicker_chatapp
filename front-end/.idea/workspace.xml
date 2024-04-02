@@ -6,30 +6,19 @@
   <component name="ChangeListManager">
     <list default="true" id="b944f8e0-888b-4bf2-b144-420847eec854" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/controller/ConversationController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/controller/ConversationController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/controller/MessageController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/controller/MessageController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/model/MessageUserSetting.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/model/MessageUserSetting.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/repository/ConversationRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/repository/ConversationRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/repository/FileRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/repository/FileRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/repository/MessageRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/repository/MessageRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/repository/MessageUserSettingRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/repository/MessageUserSettingRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/service/ConversationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/service/ConversationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/service/MessageService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/service/MessageService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/service/MessageUserSettingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/service/MessageUserSettingService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/service/TranslationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/service/TranslationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/0/4/04696216cddd8a672242a6624da619a35b37c9d6" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/3/3/3393394e21dbac7686e91ad17c5283fb052d67f3" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/3/9/39c2b2cb3901483014a5257a25975f1c4d052a2c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/3/c/3ced66cdf860abe9a386a459f7bdca7d2d13d1ca" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/4/7/473eb84528bd61efade6754cc0a39f5abae83220" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/4/c/4c4c67678deae35eb082b0f724362197d44bd717" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/5/b/5bd5971c5913691648792e5ac8a69aeeebe81854" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/9/b/9b566014c9ccc5338c77816abbc8cc83d768bed8" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/9/c/9c4f00c4d56a6dc3d64c06f9589d321b8e1fcfb6" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/c/8/c8dbf577a3e3413de199910dd92132ecbeef647c" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/c/f/cfb47de6ae0cae626eed46461300112ef521d977" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/1/f/1f1bc9bf4ebc2d7ec3ff54747fd00b60a083289a" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/5/5/5551471f61330dc7be4d05f09dfa8e6eb96e5d76" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/9/9/99631893db303a81795e22cde70b3ec00f357755" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/d/8/d8932f7ef936801d2988697d5fc957d370e343ec" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/d/a/da2d62e6418b3ffca6e5923c7737cc7644b431b2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/f/7/f78badc5ecf8821bdebf860c4f2af47c29d1ff2d" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/archivedChat/[id]/accessArchivedConversationsModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/archivedChat/[id]/accessArchivedConversationsModal.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/archivedChat/[id]/conversationContextMenu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/archivedChat/[id]/conversationContextMenu.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/archivedChat/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/archivedChat/layout.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/archivedChat/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/archivedChat/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/chat/[id]/confirmDeleteConversationModal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/chat/[id]/confirmDeleteConversationModal.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/redux/slices/chat.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/redux/slices/chat.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/shared/APIs/conversationAPI.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/shared/APIs/conversationAPI.ts" afterDir="false" />
@@ -99,7 +88,8 @@
       <workItem from="1704708251973" duration="18728000" />
       <workItem from="1705483007352" duration="7908000" />
       <workItem from="1708649671543" duration="8793000" />
-      <workItem from="1709435089408" duration="4992000" />
+      <workItem from="1709435089408" duration="6861000" />
+      <workItem from="1711594267068" duration="4467000" />
     </task>
     <servers />
   </component>

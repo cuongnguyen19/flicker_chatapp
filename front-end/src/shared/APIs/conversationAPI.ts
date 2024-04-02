@@ -230,6 +230,14 @@ export const deleteConversation = async (conversationId: number) => {
   }
 };
 
+export const deleteArchivedConversation = async (conversationId: number) => {
+  try {
+    return await axiosCaller(`/conversation/delete/archived/${conversationId}`, "DELETE");
+  } catch (e) {
+    throw e;
+  }
+};
+
 export const unarchiveConversation = async (conversationId: number) => {
   try {
     return await axiosCaller(`/conversation/unarchive/${conversationId}`, "DELETE");

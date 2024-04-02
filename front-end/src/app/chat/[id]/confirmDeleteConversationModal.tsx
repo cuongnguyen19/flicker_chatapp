@@ -7,9 +7,6 @@ import { connect } from "react-redux";
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {Conversation, deleteConversationAsyncAction} from "@/redux/slices/chat";
 import {useForm} from "antd/es/form/Form";
-import {setHiddenConversationPassword} from "@/shared/APIs/userAPI";
-import ChangeHiddenConversationPasswordModal from "./changeHiddenConversationPasswordModal";
-import ResetHiddenConversationPasswordModal from "./resetHiddenConversationPasswordModal";
 
 type Props = {
     user: User;

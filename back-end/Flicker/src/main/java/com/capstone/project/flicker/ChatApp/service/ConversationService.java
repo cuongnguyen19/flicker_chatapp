@@ -321,6 +321,18 @@ public class ConversationService {
                 .build();
         Message savedMessage = messageRepository.save(message);
 
+        for(User currUser: savedConversation.getUsers()) {
+            MessageUserSetting mus = MessageUserSetting.builder()
+                    .user(currUser)
+                    .message(savedMessage)
+                    .conversation(conversation)
+                    .status(Message.Status.RECEIVED)
+                    .archived(false)
+                    .hidden(false)
+                    .build();
+            messageUserSettingService.save(mus);
+        }
+
         simpMessagingTemplate.convertAndSend("/topic/conversation/" + savedConversation.getId(), savedMessage);
 
         notificationService.sendNotificationToTopic(savedConversation, savedMessage);
@@ -376,6 +388,18 @@ public class ConversationService {
 
             Message savedMessage = messageRepository.save(message);
 
+            for(User currUser: savedConversation.getUsers()) {
+                MessageUserSetting mus = MessageUserSetting.builder()
+                        .user(currUser)
+                        .message(savedMessage)
+                        .conversation(conversation)
+                        .status(Message.Status.RECEIVED)
+                        .archived(false)
+                        .hidden(false)
+                        .build();
+                messageUserSettingService.save(mus);
+            }
+
             savedConversation.getUsers().stream().filter(u -> oldUsers.stream().noneMatch(ou -> ou.getId() == u.getId())).forEach(u -> {
                 simpMessagingTemplate.convertAndSend("/topic/user/" + u.getId(), savedConversation);
             });
@@ -411,6 +435,18 @@ public class ConversationService {
         conversationUserSettingService.save(conversationUserSetting);
 
         Message savedMessage = messageRepository.save(message);
+
+        for(User currUser: savedConversation.getUsers()) {
+            MessageUserSetting mus = MessageUserSetting.builder()
+                    .user(currUser)
+                    .message(savedMessage)
+                    .conversation(conversation)
+                    .status(Message.Status.RECEIVED)
+                    .archived(false)
+                    .hidden(false)
+                    .build();
+            messageUserSettingService.save(mus);
+        }
 
         oldUsers.forEach(u -> {
             simpMessagingTemplate.convertAndSend("/topic/user/" + u.getId() + "/updateUsers", savedConversation);
@@ -463,6 +499,18 @@ public class ConversationService {
 
             Message savedMessage = messageRepository.save(message);
 
+            for(User currUser: savedConversation.getUsers()) {
+                MessageUserSetting mus = MessageUserSetting.builder()
+                        .user(currUser)
+                        .message(savedMessage)
+                        .conversation(conversation)
+                        .status(Message.Status.RECEIVED)
+                        .archived(false)
+                        .hidden(false)
+                        .build();
+                messageUserSettingService.save(mus);
+            }
+
             notificationService.sendNotificationToTopic(savedConversation, savedMessage);
 
             return savedMessage;
@@ -498,6 +546,19 @@ public class ConversationService {
                     .build();
 
             Message savedMessage = messageRepository.save(message);
+
+            for(User currUser: savedConversation.getUsers()) {
+                MessageUserSetting mus = MessageUserSetting.builder()
+                        .user(currUser)
+                        .message(savedMessage)
+                        .conversation(conversation)
+                        .status(Message.Status.RECEIVED)
+                        .archived(false)
+                        .hidden(false)
+                        .build();
+                messageUserSettingService.save(mus);
+            }
+
             savedConversation.getUsers().forEach(user -> {
                 simpMessagingTemplate.convertAndSend("/topic/user/" + user.getId() + "/updateUsers", savedConversation);
             });
@@ -527,6 +588,18 @@ public class ConversationService {
         conversation.setUpdatedAt(Instant.now());
         Conversation savedConversation = save(conversation);
         Message savedMessage = messageRepository.save(message);
+
+        for(User currUser: savedConversation.getUsers()) {
+            MessageUserSetting mus = MessageUserSetting.builder()
+                    .user(currUser)
+                    .message(savedMessage)
+                    .conversation(conversation)
+                    .status(Message.Status.RECEIVED)
+                    .archived(false)
+                    .hidden(false)
+                    .build();
+            messageUserSettingService.save(mus);
+        }
 
         simpMessagingTemplate.convertAndSend("/topic/user/" + savedConversation.getId() + "/conversationName", savedConversation);
         notificationService.sendNotificationToTopic(savedConversation, savedMessage);
@@ -650,15 +723,23 @@ public class ConversationService {
         throw new IllegalArgumentException("Archived Conversation not found for the conversation id " + conversationId);
     }
 
-    public ArchivedConversation markRemovedArchivedConversation(Long archivedConversationId) {
-        ArchivedConversation archivedConversation = archivedConversationService.findById(archivedConversationId).orElseThrow(() -> new IllegalArgumentException("Archived Conversation not found for id: " + archivedConversationId));
-        archivedConversation.setIsRemoved(true);
-        return archivedConversationService.save(archivedConversation);
+    public Boolean deleteArchivedConversation(Long userId, Long conversationId) {
+        Optional<ArchivedConversation> archivedConversation = archivedConversationService.findByUserIdAndConversationId(userId, conversationId);
+        if(!archivedConversation.isPresent())
+            throw new IllegalArgumentException("Archived Conversation not found for conversation id: " + conversationId);
+        else {
+            Set<MessageUserSetting> messageUserSettings = messageUserSettingService.findByUserIdAndConversationIdAndArchived(userId, conversationId, true);
+            messageUserSettings.forEach(mus -> {
+                mus.setHidden(true);
+                messageUserSettingService.save(mus);
+            });
+            archivedConversationService.delete(archivedConversation.get());
+            return true;
+        }
     }
 
     public Boolean deleteConversation(Long userId, Long conversationId) {
         User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        Optional<ArchivedConversation> archivedConversation = archivedConversationService.findByUserIdAndConversationId(userId, conversationId);
         Conversation conversation = conversationRepository.findById(conversationId).orElseThrow( () -> new IllegalArgumentException("Conversation not found for id: " + conversationId));
         Set<MessageUserSetting> messageUserSettings = messageUserSettingService.findByUserIdAndConversationIdAndHiddenAndArchived(userId, conversationId, false, false);
         messageUserSettings.forEach(mus -> {

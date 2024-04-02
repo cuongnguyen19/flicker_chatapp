@@ -13,6 +13,7 @@ import { MessageInstance } from "antd/es/message/interface";
 import { User } from "@/redux/slices/user";
 
 import ConfirmUnarchiveConversationModal from "@/app/archivedChat/[id]/confirmUnarchiveConversationModal";
+import ConfirmDeleteConversationModal from "@/app/archivedChat/[id]/confirmDeleteConversationModal";
 
 type Props = {
     children: React.ReactNode;
@@ -65,6 +66,14 @@ const conversationContextMenu = ({ children, language, isHidden, message, user, 
             <ConfirmUnarchiveConversationModal
                 open={openUnarchive}
                 onCancel={() => setOpenUnarchive(false)}
+                conversation={conversation}
+                messageApi={messageApi}
+                dispatch={dispatch}
+            />
+
+            <ConfirmDeleteConversationModal
+                open={openDelete}
+                onCancel={() => setOpenDelete(false)}
                 conversation={conversation}
                 messageApi={messageApi}
                 dispatch={dispatch}
