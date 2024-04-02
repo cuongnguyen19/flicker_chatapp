@@ -43,7 +43,10 @@ const ProtectedRouter = ({ children, status, dispatch }: Props) => {
   return shouldRender ? (
     <div className="h-screen flex">
       {contextHolder}
-      <Navbar />
+      <Navbar
+          messageApi={messageApi}
+          dispatch={dispatch}
+      />
       {children}
     </div>
   ) : (

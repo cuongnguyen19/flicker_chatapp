@@ -21,6 +21,19 @@ export const searchConversations = async (query: string, page?: number, size?: n
   }
 };
 
+export const searchArchivedConversations = async (query: string, page?: number, size?: number) => {
+  try {
+    return await axiosCaller(
+        "/conversation/search/archived",
+        "GET",
+        {},
+        { query: query ? query : "''", page, size }
+    );
+  } catch (e) {
+    throw e;
+  }
+};
+
 export const createPrivateChat = async (userId2: number) => {
   try {
     return await axiosCaller("/conversation/create/private-chat", "POST", {}, { userId2 });
@@ -54,9 +67,33 @@ export const getConversationMedia = async (
   }
 };
 
+export const getArchivedConversationMedia = async (
+    conversationId: number,
+    page?: number,
+    size?: number
+) => {
+  try {
+    return await axiosCaller(
+        `/conversation/media/get/archived/${conversationId}`,
+        "GET",
+        {},
+        { page, size }
+    );
+  } catch (e) {
+    throw e;
+  }
+};
 export const getConversationDocs = async (conversationId: number, page?: number, size?: number) => {
   try {
     return await axiosCaller(`/conversation/docs/get/${conversationId}`, "GET", {}, { page, size });
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const getArchivedConversationDocs = async (conversationId: number, page?: number, size?: number) => {
+  try {
+    return await axiosCaller(`/conversation/docs/get/archived/${conversationId}`, "GET", {}, { page, size });
   } catch (e) {
     throw e;
   }
@@ -140,6 +177,78 @@ export const setConversationNotification = async (
     return await axiosFormCaller(`/conversation/notification/set/${conversationId}`, "PUT", {
       notification,
     });
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const hideConversation = async (conversationId: number, password: string) => {
+  try {
+    return await axiosCaller(`/conversation/hide/${conversationId}`, "POST", {password});
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const unhideConversation = async (conversationId: number, password: string) => {
+  try {
+    return await axiosCaller(`/conversation/unhide/${conversationId}`, "DELETE", {password});
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const checkHiddenConversation = async (conversationId: number) => {
+  try {
+    return await axiosCaller(`/conversation/checkHidden/${conversationId}`, "GET");
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const getArchivedConversations = async (page?: number, size?: number) => {
+  try {
+    return await axiosCaller("/conversation/get/archived", "GET", {}, { page, size });
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const archiveConversation = async (conversationId: number, password: string) => {
+  try {
+    return await axiosCaller(`/conversation/archive/${conversationId}`, "POST", {password});
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const deleteConversation = async (conversationId: number) => {
+  try {
+    return await axiosCaller(`/conversation/delete/${conversationId}`, "DELETE");
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const deleteArchivedConversation = async (conversationId: number) => {
+  try {
+    return await axiosCaller(`/conversation/delete/archived/${conversationId}`, "DELETE");
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const unarchiveConversation = async (conversationId: number) => {
+  try {
+    return await axiosCaller(`/conversation/unarchive/${conversationId}`, "DELETE");
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const removeConversation = async (conversationId: number) => {
+  try {
+    return await axiosCaller(`/conversation/remove/${conversationId}`, "DELETE");
   } catch (e) {
     throw e;
   }

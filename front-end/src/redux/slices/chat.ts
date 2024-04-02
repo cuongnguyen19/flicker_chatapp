@@ -3,19 +3,26 @@ import { User } from "./user";
 import { MessageInstance } from "antd/es/message/interface";
 import {
   getConversationDocs,
+  getArchivedConversationDocs,
   getConversationMedia,
+  getArchivedConversationMedia,
   getConversationNotification,
   getConversationPreferLanguage,
   getConversations,
+  getArchivedConversations,
   getNumOfUnseenMessages,
   getUserRoles,
   searchConversations,
-  setConversationNotification,
+  searchArchivedConversations,
+  deleteConversation,
+    deleteArchivedConversation,
 } from "@/shared/APIs/conversationAPI";
-import { getMessages, markMessageAsSeen } from "@/shared/APIs/messageAPI";
+import {getMessages, hideMessage, markMessageAsSeen, getArchivedMessages} from "@/shared/APIs/messageAPI";
+import {hideConversation, unhideConversation, checkHiddenConversation, archiveConversation, unarchiveConversation} from "@/shared/APIs/conversationAPI";
 import { transcribe, translate } from "@/shared/APIs/languageAPI";
 import { RootState } from "../store";
 import { NavigateOptions } from "next/dist/shared/lib/app-router-context";
+import {checkArchivedPassMatch} from "@/shared/APIs/userAPI";
 
 export interface File {
   id: number;
@@ -155,8 +162,8 @@ const chatSlice = createSlice({
     deleteMessage: (
       state,
       action: PayloadAction<{
-        message: Message;
         conversationId: number;
+        messageId: number;
       }>
     ) => {
       const conversation = state.conversations.find((c) => c.id === action.payload.conversationId);
@@ -322,7 +329,43 @@ const chatSlice = createSlice({
         state.conversations[index].avatar = conversation.avatar;
       }
     },
-  },
+
+    concealMessage: (
+        state,
+        action: PayloadAction<{
+          conversationId: number;
+          messageId: number;
+        }>
+    ) => {
+      const conversation = state.conversations.find((c) => c.id === action.payload.conversationId);
+      if (conversation) {
+        conversation.message.messages = conversation.message.messages.filter((m) => m.id !== action.payload.messageId);
+        state.currentId = null;
+      }
+    },
+
+    concealConversation: (
+        state,
+        action: PayloadAction<{
+          conversationId: number;
+        }>
+    ) => {
+      state.conversations = state.conversations.filter((c) => c.id !== action.payload.conversationId);
+      state.currentId = null;
+      },
+
+    unconcealConversation: (
+        state,
+        action: PayloadAction<{
+          conversationId: number;
+        }>
+    ) => {
+      state.conversations = state.conversations.filter((c) => c.id !== action.payload.conversationId);
+      state.currentId = null;
+      },
+
+    },
+
   extraReducers: (builder) => {
     builder.addCase(getMessagesAsyncAction.fulfilled, (state, action) => {
       const conversation = state.conversations.find((c) => c.id === action.payload?.conversationId);
@@ -379,10 +422,10 @@ const chatSlice = createSlice({
 
 const getConversationsAsyncAction = createAsyncThunk(
   "Chat/GetConversations",
-  async (data: { messageApi: MessageInstance }, thunkAPI) => {
+  async (data: { messageApi: MessageInstance, page?: number; size?: number }, thunkAPI) => {
     try {
       thunkAPI.dispatch(setState({ loadingConversation: true }));
-      const response: any = await getConversations();
+      const response: any = await getConversations(data.page, data.size);
       const conversations = response.content as Conversation[];
       await Promise.all(
         conversations.map(async (c) => {
@@ -431,6 +474,51 @@ const getConversationsAsyncAction = createAsyncThunk(
     }
   }
 );
+
+
+
+
+const getArchivedConversationsAsyncAction = createAsyncThunk(
+    "Chat/GetArchivedConversations",
+    async (data: { messageApi: MessageInstance, page?: number; size?: number }, thunkAPI) => {
+      try {
+        thunkAPI.dispatch(setState({ loadingConversation: true }));
+        const response: any = await getArchivedConversations(data.page, data.size);
+        const conversations = response.content as Conversation[];
+        await Promise.all(
+            conversations.map(async (c) => {
+              const messageResponse = await getArchivedMessages(c.id, undefined, 20);
+              const media = await getArchivedConversationMedia(c.id, undefined, 20);
+              const docs = await getArchivedConversationDocs(c.id, undefined, 20);
+
+              c.message = {
+                hasMore: !messageResponse.last,
+                messages: messageResponse.content,
+              };
+              c.media = {
+                hasMore: !media.last,
+                mediaFiles: media.content,
+              };
+              c.document = {
+                hasMore: !docs.last,
+                documentFiles: docs.content.filter(
+                    (f: any) => f.contentType !== "application/octet-stream"
+                ),
+              };
+            })
+        );
+        thunkAPI.dispatch(setState({ loadingConversation: false, conversations }));
+        if (response.content?.length > 0) {
+          thunkAPI.dispatch(selectIf({ currentId: response.content[0].id }));
+        }
+      } catch (e: any) {
+        thunkAPI.dispatch(setState({ loadingConversation: false }));
+        data.messageApi.error(e.message);
+      }
+    }
+);
+
+
 
 const addConversationAsyncAction = createAsyncThunk(
   "Chat/addConversation",
@@ -528,6 +616,44 @@ const searchConversationsAsyncAction = createAsyncThunk(
       data.messageApi.error(e.message);
     }
   }
+);
+
+const searchArchivedConversationsAsyncAction = createAsyncThunk(
+    "Chat/SearchConversations",
+    async (
+        data: { messageApi: MessageInstance; query: string; page?: number; size?: number },
+        thunkAPI
+    ) => {
+      try {
+        const response: any = await searchArchivedConversations(data.query, data.page, data.size);
+        const conversations = response.content as Conversation[];
+        await Promise.all(
+            conversations.map(async (c) => {
+              const messageResponse = await getArchivedMessages(c.id, undefined, 20);
+              const media = await getArchivedConversationMedia(c.id, undefined, 20);
+              const docs = await getArchivedConversationDocs(c.id, undefined, 20);
+              c.message = {
+                hasMore: !messageResponse.last,
+                messages: messageResponse.content,
+              };
+              c.media = {
+                hasMore: !media.last,
+                mediaFiles: media.content,
+              };
+              c.document = {
+                hasMore: !docs.last,
+                documentFiles: docs.content.filter(
+                    (f: any) => f.contentType !== "application/octet-stream"
+                ),
+              };
+            })
+
+        );
+        thunkAPI.dispatch(setState({ conversations }));
+      } catch (e: any) {
+        data.messageApi.error(e.message);
+      }
+    }
 );
 
 const getMessagesAsyncAction = createAsyncThunk(
@@ -686,9 +812,136 @@ const markMessageAsSeenAsyncAction = createAsyncThunk(
   }
 );
 
+const hideMessageAsyncAction = createAsyncThunk(
+    "Message/Hide",
+    async (data: { messageApi: MessageInstance; conversationId: number; messageId: number }, thunkAPI) => {
+      try {
+        await hideMessage(data.conversationId, data.messageId);
+        thunkAPI.dispatch(concealMessage({conversationId: data.conversationId, messageId: data.messageId }));
+      } catch (e: any) {
+        data.messageApi.error(e.message);
+      }
+    }
+);
+
+const hideConversationAsyncAction = createAsyncThunk(
+    "Conversation/Hide",
+    async (data: { messageApi: MessageInstance; conversationId: number; password: string}, thunkAPI) => {
+      try {
+        await hideConversation(data.conversationId, data.password);
+        thunkAPI.dispatch(concealConversation({conversationId: data.conversationId}));
+        data.messageApi.success("Hide conversation successfully");
+      } catch (e: any) {
+        if(e.response?.status === 500) {
+          data.messageApi.error("Wrong password");
+        }
+        else
+          data.messageApi.error(e.message);
+      }
+    }
+);
+
+const unhideConversationAsyncAction = createAsyncThunk(
+    "Conversation/Unhide",
+    async (data: { messageApi: MessageInstance; conversationId: number; password: string}, thunkAPI) => {
+      try {
+        await unhideConversation(data.conversationId, data.password);
+        thunkAPI.dispatch(unconcealConversation({conversationId: data.conversationId}));
+        data.messageApi.success("Unhide conversation successfully");
+      } catch (e: any) {
+        if(e.response?.status === 500)
+          data.messageApi.error("Wrong password");
+        else
+          data.messageApi.error(e.message);
+      }
+    }
+);
+
+const checkHiddenConversationAsyncAction = createAsyncThunk(
+    "Conversation/CheckHidden",
+    async (data: { messageApi: MessageInstance; conversationId: number}, thunkAPI) => {
+      try {
+        const response = await checkHiddenConversation(data.conversationId);
+        return response;
+      } catch (e: any) {
+        data.messageApi.error(e.message);
+      }
+    }
+);
+
+const archiveConversationAsyncAction = createAsyncThunk(
+    "Conversation/Archive",
+    async (data: { messageApi: MessageInstance; conversationId: number; password: string}, thunkAPI) => {
+      try {
+        await archiveConversation(data.conversationId, data.password);
+        thunkAPI.dispatch(concealConversation({conversationId: data.conversationId}));
+        data.messageApi.success("Archive conversation successfully");
+      } catch (e: any) {
+        if(e.response?.status === 500) {
+          data.messageApi.error("Wrong password");
+        }
+        else
+          data.messageApi.error(e.message);
+      }
+    }
+);
+
+const deleteConversationAsyncAction = createAsyncThunk(
+    "Conversation/Delete",
+    async (data: { messageApi: MessageInstance; conversationId: number; password: string}, thunkAPI) => {
+      try {
+        await deleteConversation(data.conversationId);
+        thunkAPI.dispatch(concealConversation({conversationId: data.conversationId}));
+        data.messageApi.success("Delete conversation successfully");
+      } catch (e: any) {
+        data.messageApi.error(e.message);
+      }
+    }
+);
+
+const deleteArchivedConversationAsyncAction = createAsyncThunk(
+    "Conversation/Delete",
+    async (data: { messageApi: MessageInstance; conversationId: number; password: string}, thunkAPI) => {
+      try {
+        await deleteArchivedConversation(data.conversationId);
+        thunkAPI.dispatch(concealConversation({conversationId: data.conversationId}));
+        data.messageApi.success("Delete conversation successfully");
+      } catch (e: any) {
+        data.messageApi.error(e.message);
+      }
+    }
+);
+
+const unarchiveConversationAsyncAction = createAsyncThunk(
+    "Conversation/Unarchive",
+    async (data: { messageApi: MessageInstance; conversationId: number;}, thunkAPI) => {
+      try {
+        await unarchiveConversation(data.conversationId);
+        thunkAPI.dispatch(unconcealConversation({conversationId: data.conversationId}));
+        data.messageApi.success("Unarchive conversation successfully");
+      } catch (e: any) {
+        data.messageApi.error(e.message);
+      }
+    }
+);
+
+const checkArchivedConversationPass = createAsyncThunk(
+    "Conversation/CheckArchivedConversationPass",
+    async (data: { messageApi: MessageInstance; password: string}, thunkAPI) => {
+      try {
+        const response = await checkArchivedPassMatch(data.password);
+        return response;
+      } catch (e: any) {
+        data.messageApi.error(e.message);
+      }
+    }
+);
+
 export {
   getConversationsAsyncAction,
+  getArchivedConversationsAsyncAction,
   searchConversationsAsyncAction,
+  searchArchivedConversationsAsyncAction,
   getMessagesAsyncAction,
   getConversationMediaAsyncAction,
   getConversationDocsAsyncAction,
@@ -696,6 +949,15 @@ export {
   transcribeAsyncAction,
   markMessageAsSeenAsyncAction,
   addConversationAsyncAction,
+  hideMessageAsyncAction,
+    hideConversationAsyncAction,
+  unhideConversationAsyncAction,
+  checkHiddenConversationAsyncAction,
+    archiveConversationAsyncAction,
+  unarchiveConversationAsyncAction,
+  checkArchivedConversationPass,
+  deleteConversationAsyncAction,
+  deleteArchivedConversationAsyncAction,
 };
 
 export const {
@@ -716,5 +978,8 @@ export const {
   changeConversationName,
   changeConversationAvatar,
   changeConversationNotification,
+  concealMessage,
+    concealConversation,
+    unconcealConversation,
 } = chatSlice.actions;
 export default chatSlice.reducer;

@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.elec5619.group14.flicker</groupId>
+    <groupId>com.capstone.project.flicker</groupId>
     <artifactId>ChatApp</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
@@ -20,10 +20,10 @@
 
     <developers>
         <developer>
-            <name>ELEC5619 Group 14</name>
-            <email>elec5619.group14@gmail.com</email>
+            <name>Huu Cuong Nguyen</name>
+            <email>huucuongnguyen15.23@gmail.com</email>
             <timezone>5</timezone>
-            <id>elec5619_group14</id>
+            <id>hcn_capstone_project</id>
         </developer>
     </developers>
 

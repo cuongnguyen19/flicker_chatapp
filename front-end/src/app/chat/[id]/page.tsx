@@ -5,6 +5,7 @@ import {
   changePreferConversationLanguage,
   getMessagesAsyncAction,
   select,
+    checkHiddenConversationAsyncAction,
 } from "@/redux/slices/chat";
 import { AppDispatch, RootState } from "@/redux/store";
 import React, { useEffect, useRef, useState } from "react";
@@ -24,7 +25,9 @@ import { Language } from "@/redux/slices/language";
 import {
   setConversationNotification,
   setConversationPreferLanguage,
+    checkHiddenConversation,
 } from "@/shared/APIs/conversationAPI";
+
 
 type Props = {
   params: { id: string };
@@ -38,6 +41,7 @@ const page = ({ params, conversations, user, languages, dispatch }: Props) => {
   const [messageApi, contextHolder] = message.useMessage();
   const [languageIndex, setLanguageIndex] = useState<number>(-1);
   const [showInfo, setShowInfo] = useState(true);
+  const [hidden, setHidden] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -51,6 +55,21 @@ const page = ({ params, conversations, user, languages, dispatch }: Props) => {
     if (!data?.preferLanguage) setLanguageIndex(0);
     else setLanguageIndex(languages.findIndex((l) => l.code === data?.preferLanguage));
   }, [languages, data]);
+
+  useEffect(() => {
+    if(data) {
+      const fetchHiddenStatus = async () => {
+        try {
+          const response = await checkHiddenConversation(data.id);
+          setHidden(response); // Assuming the API returns the boolean value directly
+        } catch (error: any) {
+          messageApi.error(error.message);
+        }
+      };
+
+      fetchHiddenStatus();
+    }
+  }, [data]);
 
   if (data) {
     const friend = data.users.find((u) => u.id !== user.id);
@@ -250,7 +269,7 @@ const page = ({ params, conversations, user, languages, dispatch }: Props) => {
                 scrollToBottom={scrollToBottom}
               />
             </div>
-            <InfoSideBar showInfo={showInfo} friend={friend} data={data} messageApi={messageApi} />
+            <InfoSideBar user={user} showInfo={showInfo} friend={friend} data={data} messageApi={messageApi} isHidden={hidden}/>
           </>
         ) : (
           <></>

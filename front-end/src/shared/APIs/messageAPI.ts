@@ -16,6 +16,14 @@ export const deleteMessage = async (conversationId: number, messageId: number) =
   }
 };
 
+export const hideMessage = async (conversationId: number, messageId: number) => {
+  try {
+    return await axiosCaller(`/message/hide/${conversationId}/${messageId}`, "PUT");
+  } catch (e) {
+    throw e;
+  }
+};
+
 export const markMessageAsSeen = async (conversationId: number) => {
   try {
     return await axiosCaller(`/message/mark/seen/${conversationId}`, "PUT");
@@ -43,6 +51,22 @@ export const getUserUnSeenMessage = async (conversationId: number, messageId: nu
 export const searchMessages = async (conversationId: number, query: string, page?: number, size?: number) => {
   try {
     return await axiosCaller(`/message/search/${conversationId}`, "GET", {}, { query: query ? query : "''", page, size });
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const getArchivedMessages = async (conversationId: number, page?: number, size?: number) => {
+  try {
+    return await axiosCaller(`/message/get/archived/${conversationId}`, "GET", {}, { page, size });
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const searchArchivedMessages = async (conversationId: number, query: string, page?: number, size?: number) => {
+  try {
+    return await axiosCaller(`/message/search/archived/${conversationId}`, "GET", {}, { query: query ? query : "''", page, size });
   } catch (e) {
     throw e;
   }
