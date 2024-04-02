@@ -5,9 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b944f8e0-888b-4bf2-b144-420847eec854" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../back-end/Flicker/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../back-end/Flicker/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/d/a/da1d6f21d01d0f36b5501dffcf7fd160ffcb290d" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env.local" beforeDir="false" afterPath="$PROJECT_DIR$/.env.local" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -76,7 +74,7 @@
       <workItem from="1708649671543" duration="8793000" />
       <workItem from="1709435089408" duration="6861000" />
       <workItem from="1711594267068" duration="4875000" />
-      <workItem from="1712048808363" duration="1858000" />
+      <workItem from="1712048808363" duration="2040000" />
     </task>
     <servers />
   </component>
