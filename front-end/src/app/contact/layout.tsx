@@ -5,7 +5,7 @@ import storeImage from "../../../public/store.svg";
 import addFriend from "../../../public/add-friend.svg";
 import TopButton from "./button";
 import Image from "next/image";
-import FriendItem from "./friendItem";
+import FriendItem from "./frienditem";
 import { useRouter } from "next/navigation";
 import { AppDispatch, RootState } from "@/redux/store";
 import { connect } from "react-redux";
