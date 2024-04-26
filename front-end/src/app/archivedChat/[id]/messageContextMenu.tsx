@@ -45,14 +45,6 @@ const messageContextMenu = ({ children, language, isSelfMessage, message, user, 
         },
         {
           label: (
-            <span className="text-red-500">
-              <DeleteOutlined /> Delete
-            </span>
-          ),
-          key: "delete",
-        },
-        {
-          label: (
               <span className="text-gray-500">
               <EyeInvisibleOutlined /> Hide
             </span>
