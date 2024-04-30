@@ -253,3 +253,24 @@ export const removeConversation = async (conversationId: number) => {
     throw e;
   }
 };
+
+export const setConversationLockMessage = async (
+    conversationId: number,
+    lockMessage: boolean
+) => {
+  try {
+    return await axiosFormCaller(`/conversation/lockMessage/set/${conversationId}`, "PUT", {
+      lockMessage,
+    });
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const getConversationLockMessage = async (conversationId: number) => {
+  try {
+    return await axiosCaller(`/conversation/lockMessage/get/${conversationId}`, "GET");
+  } catch (e) {
+    throw e;
+  }
+};

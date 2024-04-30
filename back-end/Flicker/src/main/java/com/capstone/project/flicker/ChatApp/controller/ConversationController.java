@@ -353,4 +353,17 @@ public class ConversationController {
                                                          @PathVariable Long conversationId){
         return ResponseEntity.ok(conversationService.getNotificationStatusForConversationUser(currentUser.getId(), conversationId));
     }
+
+    @PutMapping(path = "/lockMessage/set/{conversationId}")
+    public ResponseEntity<ConversationUserSetting> setLockMessageStatus(@CurrentUser CustomUserDetails currentUser,
+                                                                         @PathVariable Long conversationId,
+                                                                         @RequestBody UpdateLockMessageRequest request){
+        return ResponseEntity.ok(conversationService.setLockMessageStatusForConversationUser(currentUser.getId(), conversationId, request));
+    }
+
+    @GetMapping(path = "/lockMessage/get/{conversationId}")
+    public ResponseEntity<Boolean> getLockMessageStatus(@CurrentUser CustomUserDetails currentUser,
+                                                         @PathVariable Long conversationId){
+        return ResponseEntity.ok(conversationService.getLockMessageStatusForConversationUser(currentUser.getId(), conversationId));
+    }
 }

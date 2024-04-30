@@ -287,11 +287,11 @@ public class ConversationService {
             ConversationUserSetting conversationUserSetting;
             if(currId == userId) {
                 conversationUserSetting = ConversationUserSetting.builder()
-                        .user(member).conversation(conversation).dateJoined(Instant.now()).role(RoleConversationName.ROLE_ADMIN).preferredLanguage(user.getLanguage()).notification(true).build();
+                        .user(member).lockMessage(false).conversation(conversation).dateJoined(Instant.now()).role(RoleConversationName.ROLE_ADMIN).preferredLanguage(user.getLanguage()).notification(true).build();
             }
             else {
                 conversationUserSetting = ConversationUserSetting.builder()
-                        .user(member).conversation(conversation).dateJoined(Instant.now()).role(RoleConversationName.ROLE_PARTICIPANT).preferredLanguage(member.getLanguage()).notification(true).build();
+                        .user(member).lockMessage(false).conversation(conversation).dateJoined(Instant.now()).role(RoleConversationName.ROLE_PARTICIPANT).preferredLanguage(member.getLanguage()).notification(true).build();
             }
             conversationUserSettingService.save(conversationUserSetting);
         }
@@ -942,4 +942,28 @@ public class ConversationService {
         ConversationUserSetting conversationUserSetting = conversationUserSettingService.findByUserIdAndConversationId(userId, conversationId).orElseThrow(() -> new IllegalArgumentException("Conversation id: " + conversationId + " not found for user id: " + userId));
         return conversationUserSetting.getNotification();
     }
+
+
+    public ConversationUserSetting setLockMessageStatusForConversationUser(Long userId, Long conversationId, UpdateLockMessageRequest request) {
+        User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        Conversation conversation = validateUserInConversation(user, conversationId);
+        Optional<ConversationUserSetting> conversationUserPreference = conversationUserSettingService.findByUserIdAndConversationId(userId, conversationId);
+        if(conversationUserPreference.isPresent()) {
+            conversationUserPreference.get().setLockMessage(request.getLockMessage());
+            return conversationUserSettingService.save(conversationUserPreference.get());
+        }
+        else {
+            ConversationUserSetting conversationUserSetting1 = ConversationUserSetting.builder()
+                    .user(user).conversation(conversation).dateJoined(Instant.now()).lockMessage(request.getLockMessage()).build();
+            return conversationUserSettingService.save(conversationUserSetting1);
+        }
+    }
+
+    public Boolean getLockMessageStatusForConversationUser(Long userId, Long conversationId) {
+        User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        validateUserInConversation(user, conversationId);
+        ConversationUserSetting conversationUserSetting = conversationUserSettingService.findByUserIdAndConversationId(userId, conversationId).orElseThrow(() -> new IllegalArgumentException("Conversation id: " + conversationId + " not found for user id: " + userId));
+        return conversationUserSetting.getLockMessage();
+    }
+
 }

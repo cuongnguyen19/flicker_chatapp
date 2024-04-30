@@ -16,6 +16,7 @@ package com.capstone.project.flicker.AuthApp.controller;
 import com.capstone.project.flicker.AuthApp.annotation.CurrentUser;
 import com.capstone.project.flicker.AuthApp.model.payload.*;
 import com.capstone.project.flicker.ChatApp.model.payload.ArchivedConversationRequest;
+import com.capstone.project.flicker.ChatApp.model.payload.RevealedMessageRequest;
 import com.capstone.project.flicker.ChatApp.model.payload.UpdateNotificationRequest;
 import com.capstone.project.flicker.ChatApp.service.FriendshipService;
 import com.capstone.project.flicker.AuthApp.event.OnUserAccountChangeEvent;
@@ -277,5 +278,40 @@ public class UserController {
     public ResponseEntity<UserDTO> resetArchivedConversationPassword(@CurrentUser CustomUserDetails currentUser,
                                                                    @Param(value = "The ResetPasswordRequest payload") @Valid @RequestBody ResetConversationPasswordRequest request) {
         return ResponseEntity.ok(userService.resetArchivedConversationPassword(currentUser.getId(), request));
+    }
+
+    @PutMapping("/revealedMessPass/set")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Set revealed message password")
+    public ResponseEntity<UserDTO> setRevealedMessagePassword(@CurrentUser CustomUserDetails currentUser, @RequestBody SetMessagePasswordRequest request) {
+        return ResponseEntity.ok(userService.setRevealedMessagePassword(currentUser.getId(), request));
+    }
+    @GetMapping("/revealedMessPass/check")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Check revealed message password status")
+    public ResponseEntity<Boolean> checkRevealedMessPassStatus(@CurrentUser CustomUserDetails currentUser) {
+        return ResponseEntity.ok(userService.checkRevealedMessagePassStatus(currentUser.getId()));
+    }
+
+    @PutMapping("/revealedMessPass/check")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Check revealed message password match")
+    public ResponseEntity<Boolean> checkRevealedMessPassMatch(@CurrentUser CustomUserDetails currentUser, @RequestBody RevealedMessageRequest request) {
+        return ResponseEntity.ok(userService.checkRevealedMessagePass(currentUser.getId(), request));
+    }
+    @PutMapping("/revealedMessPass/update")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Updates archived conversation password")
+    public ResponseEntity<UserDTO> v(@CurrentUser CustomUserDetails currentUser,
+                                                                      @Param(value = "The UpdatePasswordRequest payload") @Valid @RequestBody UpdatePasswordRequest request) {
+        return ResponseEntity.ok(userService.updateRevealedMessagePassword(currentUser.getId(), request));
+    }
+
+    @PutMapping("/revealedMessPass/reset")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Resets hidden conversation password")
+    public ResponseEntity<UserDTO> resetRevealedMessagePassword(@CurrentUser CustomUserDetails currentUser,
+                                                                     @Param(value = "The ResetPasswordRequest payload") @Valid @RequestBody ResetMessagePasswordRequest request) {
+        return ResponseEntity.ok(userService.resetRevealedMessagePassword(currentUser.getId(), request));
     }
 }

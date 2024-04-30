@@ -172,4 +172,14 @@ public class MessageController {
         Page<MessageDTO> messages = messageService.getArchivedMessages(currentUser.getId(), conversationId, pageable);
         return ResponseEntity.ok(messageService.filteredMessages(messages, query, pageable));
     }*/
+
+    @GetMapping(path = "/get/locked/{conversationId}/{messageId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public Boolean getMessageLockedStatus(@CurrentUser CustomUserDetails currentUser, @PathVariable("conversationId") Long conversationId, @PathVariable("messageId") Long messageId) {
+        return messageService.getMessageLockedStatus(currentUser.getId(), conversationId, messageId);
+    }
+
+    @GetMapping(path = "/get/lockedContent/{conversationId}/{messageId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String getMessageLockedContent(@CurrentUser CustomUserDetails currentUser, @PathVariable("conversationId") Long conversationId, @PathVariable("messageId") Long messageId) {
+        return messageService.getMessageLockedContent(currentUser.getId(), conversationId, messageId);
+    }
 }

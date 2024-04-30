@@ -176,3 +176,39 @@ export const resetArchivedConversationPassword = async (accountPassword: string,
   }
 };
 
+export const setRevealedMessagePassword = async (password: string) => {
+  try {
+    return await axiosCaller(`/user/revealedMessPass/set`, "PUT", {password});
+  } catch (e) {
+    throw e;
+  }
+};
+export const checkRevealedMessPassStatus = async () => {
+  try {
+    return await axiosCaller(`/user/revealedMessPass/check`, "GET");
+  } catch (e) {
+    throw e;
+  }
+};
+export const checkRevealedMessPassMatch = async (password: string) => {
+  try {
+    return await axiosCaller(`/user/revealedMessPass/check`, "PUT", {password});
+  } catch (e) {
+    throw e;
+  }
+};
+export const updateRevealedMessagePassword = async (oldPassword: string, newPassword: string) => {
+  try {
+    return await axiosCaller(`/user/revealedMessPass/update`, "PUT", {oldPassword, newPassword});
+  } catch (e) {
+    throw e;
+  }
+};
+export const resetRevealedMessagePassword = async (accountPassword: string, messagePassword: string) => {
+  try {
+    return await axiosCaller(`/user/revealedMessPass/reset`, "PUT", {accountPassword, messagePassword});
+  } catch (e) {
+    throw e;
+  }
+};
+

@@ -18,5 +18,6 @@ public class MessageDTO {
     private Set<File> files;
     private Message.Status status;
     private Boolean deleted;
+    private Boolean locked;
     private Instant createdAt;
 }

@@ -54,6 +54,8 @@ public class MessageService {
 
         Message message = Message.builder()
                 .content(request.getContent())
+                .lockedContent(request.getLockedContent() != null ? request.getLockedContent() : null)
+                .locked(request.getLocked() != null ? request.getLocked() : null)
                 .messageType(request.getMessageType())
                 .sender(user)
                 .status(Message.Status.SENT)
@@ -295,5 +297,17 @@ public class MessageService {
                 .collect(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(MessageDTO::getCreatedAt).reversed())));
 
         return handle.setToPage(messageSet, pageable);
+    }
+
+    public Boolean getMessageLockedStatus(Long userId, Long conversationId, Long messageId) {
+        User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        Message message = messageRepository.findByMessageIdAndConversationId(messageId, conversationId).orElseThrow(() -> new IllegalArgumentException("Message with id: " + messageId + " not found in specified conversation id: " + conversationId));
+        return message.getLocked();
+    }
+
+    public String getMessageLockedContent(Long userId, Long conversationId, Long messageId) {
+        User user = userService.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
+        Message message = messageRepository.findByMessageIdAndConversationId(messageId, conversationId).orElseThrow(() -> new IllegalArgumentException("Message with id: " + messageId + " not found in specified conversation id: " + conversationId));
+        return message.getLockedContent();
     }
 }

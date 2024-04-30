@@ -27,6 +27,7 @@ import {
   setConversationPreferLanguage,
     checkHiddenConversation,
 } from "@/shared/APIs/conversationAPI";
+import {getMessageLockedStatus} from "@/shared/APIs/messageAPI";
 
 
 type Props = {
@@ -70,6 +71,7 @@ const page = ({ params, conversations, user, languages, dispatch }: Props) => {
       fetchHiddenStatus();
     }
   }, [data]);
+
 
   if (data) {
     const friend = data.users.find((u) => u.id !== user.id);
@@ -175,6 +177,7 @@ const page = ({ params, conversations, user, languages, dispatch }: Props) => {
                       </svg>
                     )}
                   </button>
+
                   <button
                     onClick={() => setShowInfo(!showInfo)}
                     className="bg-button rounded-lg w-9 h-9 flex justify-center items-center hover:bg-gray-200"
@@ -213,6 +216,7 @@ const page = ({ params, conversations, user, languages, dispatch }: Props) => {
                     const date = new Date(m.createdAt * 1000);
                     const today = new Date();
                     const yesterday = new Date(today.getTime() - 60 * 60 * 24 * 1000);
+
                     let shouldShowAvatar = false;
                     let shouldShowName = false;
                     if (i === 0) shouldShowAvatar = true;
@@ -263,10 +267,13 @@ const page = ({ params, conversations, user, languages, dispatch }: Props) => {
                 </InfiniteScroll>
               </div>
               <TextInput
+                  params={params}
+                  conversations={conversations}
                 conversationId={data.id}
                 user={user}
                 messageApi={messageApi}
                 scrollToBottom={scrollToBottom}
+                dispatch={dispatch}
               />
             </div>
             <InfoSideBar user={user} showInfo={showInfo} friend={friend} data={data} messageApi={messageApi} isHidden={hidden}/>

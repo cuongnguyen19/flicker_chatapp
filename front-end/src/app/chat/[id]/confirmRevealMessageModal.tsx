@@ -5,19 +5,27 @@ import { MessageInstance } from "antd/es/message/interface";
 import React, {useContext, useState} from "react";
 import { connect } from "react-redux";
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import {Conversation, hideConversationAsyncAction} from "@/redux/slices/chat";
+import {Conversation, Message, hideConversationAsyncAction} from "@/redux/slices/chat";
 import {useForm} from "antd/es/form/Form";
-import {setHiddenConversationPassword} from "@/shared/APIs/userAPI";
+import {
+    checkRevealedMessPassMatch,
+    setHiddenConversationPassword,
+    setRevealedMessagePassword
+} from "@/shared/APIs/userAPI";
 import ChangeHiddenConversationPasswordModal from "./changeHiddenConversationPasswordModal";
 import ResetHiddenConversationPasswordModal from "./resetHiddenConversationPasswordModal";
+import RevealedMessageModal from "@/app/chat/[id]/revealedMessageModal";
+import ChangeRevealedMessagePassword from "@/app/chat/[id]/changeRevealedMessagePassword";
+import ResetRevealedMessagePasswordModal from "@/app/chat/[id]/resetRevealedMessagePasswordModal";
 
 type Props = {
     open: boolean;
     onCancel: () => void;
     messageApi: MessageInstance;
     conversation: Conversation;
+    message: Message;
     dispatch: AppDispatch;
-    isHiddenPass: boolean;
+    isRevealedPass: boolean;
 };
 
 type FieldType = {
@@ -26,20 +34,27 @@ type FieldType = {
     retypeNewPassword: string;
 };
 
-const confirmHideConversationModal = ({ conversation, open, onCancel, messageApi, dispatch, isHiddenPass }: Props) => {
+const confirmRevealMessageModal = ({ conversation, message, open, onCancel, messageApi, dispatch, isRevealedPass }: Props) => {
     const [loading, setLoading] = useState(false);
     const [form] = useForm<FieldType>();
     const [openUpdatePassword, setOpenUpdatePassword] = useState(false);
     const [openResetPassword, setOpenResetPassword] = useState(false);
+    const [openRevealedMessage, setOpenRevealedMessage] = useState(false);
 
     const onFinish = async (values: FieldType) => {
         try {
             setLoading(true);
-            dispatch(hideConversationAsyncAction({ messageApi, conversationId: conversation.id, password: values.password}));
-            //onCancel();
+            const status = await checkRevealedMessPassMatch(values.password);
+            if(status) {
+                setOpenRevealedMessage(true);
+            }
+            else {
+                messageApi.error("Wrong password");
+            }
             form.resetFields();
         } catch (e: any) {
             messageApi.error(e.message);
+            messageApi.error("Wrong password");
             form.resetFields();
         } finally {
             setLoading(false);
@@ -50,12 +65,10 @@ const confirmHideConversationModal = ({ conversation, open, onCancel, messageApi
     const onCreatePassword = async (values: FieldType) => {
         try {
             setLoading(true);
-            const response = await setHiddenConversationPassword(values.newPassword);
-            dispatch(hideConversationAsyncAction({ messageApi, conversationId: conversation.id, password: values.newPassword}));
-            //onCancel();
+            const response = await setRevealedMessagePassword(values.newPassword);
+            onCancel();
             form.resetFields();
-            messageApi.success("Set password for hidden conversation successfully");
-            messageApi.success("Hide conversation successfully");
+            messageApi.success("Set password for revealing message successfully");
         } catch (e: any) {
             messageApi.error(e.message);
             form.resetFields();
@@ -65,7 +78,7 @@ const confirmHideConversationModal = ({ conversation, open, onCancel, messageApi
         }
     };
 
-    if(isHiddenPass) {
+    if(isRevealedPass) {
         return (
             <ConfigProvider
                 theme={{
@@ -74,15 +87,23 @@ const confirmHideConversationModal = ({ conversation, open, onCancel, messageApi
                     },
                 }}
             >
-                <ChangeHiddenConversationPasswordModal
+                <ChangeRevealedMessagePassword
                     open={openUpdatePassword}
                     onCancel={() => setOpenUpdatePassword(false)}
                     messageApi={messageApi}
                 />
 
-                <ResetHiddenConversationPasswordModal
+                <ResetRevealedMessagePasswordModal
                     open={openResetPassword}
                     onCancel={() => setOpenResetPassword(false)}
+                    messageApi={messageApi}
+                />
+
+                <RevealedMessageModal
+                    conversation={conversation}
+                    message={message}
+                    open={openRevealedMessage}
+                    onCancel={() => setOpenRevealedMessage(false)}
                     messageApi={messageApi}
                 />
 
@@ -98,15 +119,15 @@ const confirmHideConversationModal = ({ conversation, open, onCancel, messageApi
                     title={
                         <div className="flex items-center">
                             <ExclamationCircleOutlined style={{color: 'orange'}} className="mr-2"/>
-                            <span>Confirm Hide Conversation</span>
+                            <span>Confirm Reveal Message</span>
                         </div>
                     }
                 >
-                    <div className="text-2xl mt-8 pb-6 text-center text-main">Are you sure to hide this conversation?</div>
+                    <div className="text-2xl mt-8 pb-6 text-center text-main">Are you sure to reveal this message?</div>
                     <div className="text-xl mt pb-6 text-center" >Forgot your password? Either <a href="#" onClick={() => setOpenResetPassword(true)} style={{color: 'blue'}}> reset </a> it or <a href="#" onClick={() => setOpenUpdatePassword(true)} style={{color: 'blue'}}> change </a> it </div>
                     <Form
                         form={form}
-                        name="hideConversation"
+                        name="revealMessage"
                         style={{width: 100 + "%"}}
                         onFinish={onFinish}
                         autoComplete="off"
@@ -115,11 +136,11 @@ const confirmHideConversationModal = ({ conversation, open, onCancel, messageApi
                         requiredMark={false}
                     >
                         <Form.Item<FieldType>
-                            label="Hidden Conversation Password"
+                            label="Revealed Message Password"
                             name="password"
-                            rules={[{required: true, message: "Please input your password used for hidden conversation"}]}
+                            rules={[{required: true, message: "Please input your password used for revealing message"}]}
                         >
-                            <Input placeholder="Type your password used for hidden conversation" type="password"/>
+                            <Input placeholder="Type your password used for revealing message" type="password"/>
                         </Form.Item>
 
                         <Form.Item>
@@ -157,14 +178,14 @@ const confirmHideConversationModal = ({ conversation, open, onCancel, messageApi
                     width={600}
                     title={
                         <div className="flex items-center">
-                            <span>Set Password for Hidden Conversation</span>
+                            <span>Set Password for Revealing Message</span>
                         </div>
                     }
                 >
-                    <div className="text-2xl mt-8 pb-8 text-center text-main">Please create your password used for hidden conversation</div>
+                    <div className="text-2xl mt-8 pb-8 text-center text-main">Please create your password used for revealing message</div>
                     <Form
                         form={form}
-                        name="hiddenConversationPassword"
+                        name="revealingMessagePassword"
                         style={{ width: 100 + "%" }}
                         onFinish={onCreatePassword}
                         autoComplete="off"
@@ -218,4 +239,4 @@ const mapState = ({ user }: RootState) => ({
     user: user,
 });
 
-export default connect(mapState)(confirmHideConversationModal);
+export default connect(mapState)(confirmRevealMessageModal);

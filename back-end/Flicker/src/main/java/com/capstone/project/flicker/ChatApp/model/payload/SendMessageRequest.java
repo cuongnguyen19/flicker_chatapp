@@ -22,6 +22,12 @@ public class SendMessageRequest {
     @Schema(name = "A valid message content", required = true)
     private String content;
 
+    @Schema(name = "A valid message locked content")
+    private String lockedContent;
+
+    @Schema(name = "A valid message locked status")
+    private Boolean locked;
+
     @NotNull
     @Schema(name = "A valid message type", required = true)
     private MessageType messageType;

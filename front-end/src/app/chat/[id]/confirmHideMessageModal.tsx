@@ -9,7 +9,6 @@ import {Conversation, Message} from "@/redux/slices/chat";
 import {hideMessageAsyncAction} from "@/redux/slices/chat";
 
 type Props = {
-    user: User;
     open: boolean;
     onCancel: () => void;
     messageApi: MessageInstance;
@@ -18,7 +17,7 @@ type Props = {
     dispatch: AppDispatch;
 };
 
-const confirmHideMessageModal = ({ user, conversation, message, open, onCancel, messageApi, dispatch }: Props) => {
+const confirmHideMessageModal = ({ conversation, message, open, onCancel, messageApi, dispatch }: Props) => {
     const [loading, setLoading] = useState(false);
 
     const onFinish = async () => {

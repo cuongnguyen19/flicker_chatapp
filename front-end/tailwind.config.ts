@@ -20,6 +20,7 @@ const config: Config = {
     },
     colors: {
       transparent: "#CEDEBD",
+      sapphire: "#0F52BA",
       main: "#435334",
       light: "#F3FDE6",
       "light-mid": "#EEEEEE",
@@ -31,6 +32,7 @@ const config: Config = {
       black: colors.black,
       white: colors.white,
       gray: colors.gray,
+      blue: colors.blue,
       emerald: colors.emerald,
       indigo: colors.indigo,
       yellow: colors.yellow,

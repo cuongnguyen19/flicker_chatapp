@@ -42,4 +42,7 @@ public class ConversationUserSetting extends DateAudit {
 
     @Column(name = "NOTIFICATION")
     private Boolean notification;
+
+    @Column(name = "LOCK_MESSAGE")
+    private Boolean lockMessage;
 }

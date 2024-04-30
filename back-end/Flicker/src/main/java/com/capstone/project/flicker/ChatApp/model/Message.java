@@ -28,6 +28,9 @@ public class Message extends DateAudit {
     @NotBlank(message = "Content must not be blank")
     private String content;
 
+    @Column(name = "LOCKED_CONTENT")
+    private String lockedContent;
+
     @Column(name = "MESSAGE_TYPE")
     @Enumerated(value = EnumType.STRING)
     private MessageType messageType;
@@ -50,8 +53,11 @@ public class Message extends DateAudit {
     @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE}, mappedBy = "message")
     private Set<File> files = new HashSet<>();
 
-    @Column(name = "deleted")
+    @Column(name = "DELETED")
     private Boolean deleted;
+
+    @Column(name = "LOCKED")
+    private Boolean locked;
 
     @Column(name = "STATUS")
     @Enumerated(value = EnumType.STRING)

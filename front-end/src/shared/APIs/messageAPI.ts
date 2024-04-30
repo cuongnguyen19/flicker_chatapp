@@ -71,3 +71,19 @@ export const searchArchivedMessages = async (conversationId: number, query: stri
     throw e;
   }
 };
+
+export const getMessageLockedStatus = async (conversationId: number, messageId: number) => {
+  try {
+    return await axiosCaller(`/message/get/locked/${conversationId}/${messageId}`, "GET");
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const getMessageLockedContent = async (conversationId: number, messageId: number) => {
+  try {
+    return await axiosCaller(`/message/get/lockedContent/${conversationId}/${messageId}`, "GET");
+  } catch (e) {
+    throw e;
+  }
+};

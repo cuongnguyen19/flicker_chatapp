@@ -15,9 +15,15 @@ import {
   searchConversations,
   searchArchivedConversations,
   deleteConversation,
-    deleteArchivedConversation,
+  deleteArchivedConversation, getConversationLockMessage,
 } from "@/shared/APIs/conversationAPI";
-import {getMessages, hideMessage, markMessageAsSeen, getArchivedMessages} from "@/shared/APIs/messageAPI";
+import {
+  getMessages,
+  hideMessage,
+  markMessageAsSeen,
+  getArchivedMessages,
+  getMessageLockedStatus, getMessageLockedContent
+} from "@/shared/APIs/messageAPI";
 import {hideConversation, unhideConversation, checkHiddenConversation, archiveConversation, unarchiveConversation} from "@/shared/APIs/conversationAPI";
 import { transcribe, translate } from "@/shared/APIs/languageAPI";
 import { RootState } from "../store";
@@ -43,6 +49,8 @@ export interface File {
 export interface Message {
   id: number;
   content: string;
+  lockedContent: string;
+  locked: boolean;
   messageType:
     | "MESSAGE_TYPE_USER_TEXT"
     | "MESSAGE_TYPE_SYSTEM_TEXT"
@@ -68,6 +76,7 @@ export interface Conversation {
   users: (User & { role: "ROLE_PARTICIPANT" | "ROLE_ADMIN" | "ROLE_SUB_ADMIN" })[];
   isGroup: boolean;
   notification: boolean;
+  lockMessage: boolean;
   preferLanguage: string | null;
   shouldTranslate: boolean;
   unseenMessage: number;
@@ -330,6 +339,16 @@ const chatSlice = createSlice({
       }
     },
 
+    changeConversationLockMessage: (
+        state,
+        action: PayloadAction<{ conversationId: number; lockMessage: boolean }>
+    ) => {
+      const conversation = state.conversations.find((c) => c.id === action.payload.conversationId);
+      if (conversation) {
+        conversation.lockMessage = action.payload.lockMessage;
+      }
+    },
+
     concealMessage: (
         state,
         action: PayloadAction<{
@@ -435,6 +454,7 @@ const getConversationsAsyncAction = createAsyncThunk(
           const preferLanguage = await getConversationPreferLanguage(c.id);
           const unseenMessage = await getNumOfUnseenMessages(c.id);
           const notification = await getConversationNotification(c.id);
+          const lockMessage = await getConversationLockMessage(c.id);
           const userRoles = (await getUserRoles(c.id)) as {
             [s: number]: "ROLE_PARTICIPANT" | "ROLE_ADMIN" | "ROLE_SUB_ADMIN";
           };
@@ -448,6 +468,18 @@ const getConversationsAsyncAction = createAsyncThunk(
             hasMore: !messageResponse.last,
             messages: messageResponse.content,
           };
+
+          c.message.messages.map(async(m) => {
+            const locked = await getMessageLockedStatus(c.id, m.id);
+            const lockedContent = await getMessageLockedContent(c.id, m.id);
+            if(Object.isExtensible(m)) {
+              m.locked = locked ? true : false;
+              if(lockedContent) {
+                m.lockedContent = lockedContent;
+              }
+            }
+          });
+
           c.media = {
             hasMore: !media.last,
             mediaFiles: media.content,
@@ -462,6 +494,7 @@ const getConversationsAsyncAction = createAsyncThunk(
           c.shouldTranslate = false;
           c.unseenMessage = unseenMessage;
           c.notification = notification ? true : false;
+          c.lockMessage = lockMessage ? true : false;
         })
       );
       thunkAPI.dispatch(setState({ loadingConversation: false, conversations }));
@@ -531,6 +564,7 @@ const addConversationAsyncAction = createAsyncThunk(
       const preferLanguage = await getConversationPreferLanguage(c.id);
       const unseenMessage = await getNumOfUnseenMessages(c.id);
       const notification = await getConversationNotification(c.id);
+      const lockMessage = await getConversationLockMessage(c.id);
       const userRoles = (await getUserRoles(c.id)) as {
         [s: number]: "ROLE_PARTICIPANT" | "ROLE_ADMIN" | "ROLE_SUB_ADMIN";
       };
@@ -558,6 +592,7 @@ const addConversationAsyncAction = createAsyncThunk(
       c.shouldTranslate = false;
       c.unseenMessage = unseenMessage;
       c.notification = notification ? true : false;
+      c.lockMessage = lockMessage ? true : false;
       thunkAPI.dispatch(addConversation({ conversation: c }));
     } catch (e: any) {
       data.messageApi.error(e.message);
@@ -978,6 +1013,7 @@ export const {
   changeConversationName,
   changeConversationAvatar,
   changeConversationNotification,
+  changeConversationLockMessage,
   concealMessage,
     concealConversation,
     unconcealConversation,

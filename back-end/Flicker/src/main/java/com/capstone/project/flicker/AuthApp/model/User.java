@@ -153,6 +153,11 @@ public class User extends DateAudit {
     @JsonIgnore
     private String archivedConversationPassword;
 
+    @Column(name = "REVEALED_MESSAGE_PASSWORD")
+    @Size(min = 3, message = "Password must be at least 3 characters long")
+    @JsonIgnore
+    private String revealedMessagePassword;
+
     public User() {
         super();
     }

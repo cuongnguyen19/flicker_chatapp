@@ -11,7 +11,7 @@ import {
   ZoomOutOutlined,
   ArrowRightOutlined,
 } from "@ant-design/icons";
-import React, { useCallback, useEffect } from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import styles from "./styles.module.css";
 import MessageContextMenu from "./messageContextMenu";
 import { Spinner } from "@/shared/components/spinner";
@@ -41,7 +41,7 @@ const messageItem = ({
   readOnly,
   dispatch,
 }: Props) => {
-  const { sender, content, files, translate, deleted } = message;
+  const { sender, content, files, translate, deleted, locked } = message;
   const isSelfMessage = sender.id === userId;
 
   const onDownload = (file: File) => {
@@ -105,6 +105,7 @@ const messageItem = ({
         <div className="flex flex-col gap-1">
           <MessageContextMenu
             isSelfMessage={isSelfMessage}
+            isLocked={locked}
             message={message}
             conversation={conversation}
             messageApi={messageApi}
@@ -117,7 +118,7 @@ const messageItem = ({
             >
               <div
                 className={`${
-                  isSelfMessage ? "bg-transparent rounded-bl-2xl" : "bg-white  rounded-br-2xl"
+                  isSelfMessage ? (!locked ? "bg-transparent rounded-bl-2xl" : "bg-platinum rounded-bl-2xl") : (!locked ? "bg-white rounded-br-2xl" : "bg-platinum rounded-br-2xl")
                 } py-3 px-4 rounded-tl-2xl text-left rounded-tr-2xl min-w-[40px] max-w-[200px] lg:max-w-[400px] break-words whitespace-pre-wrap`}
               >
                 {content}
@@ -309,6 +310,7 @@ const messageItem = ({
             <div className="flex flex-col gap-1">
               <MessageContextMenu
                 isSelfMessage={isSelfMessage}
+                isLocked={locked}
                 message={message}
                 conversation={conversation}
                 messageApi={messageApi}
