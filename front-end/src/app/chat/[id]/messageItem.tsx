@@ -118,7 +118,7 @@ const messageItem = ({
             >
               <div
                 className={`${
-                  isSelfMessage ? (!locked ? "bg-transparent rounded-bl-2xl" : "bg-platinum rounded-bl-2xl") : (!locked ? "bg-white rounded-br-2xl" : "bg-platinum rounded-br-2xl")
+                  isSelfMessage ? (!locked ? "bg-transparent rounded-bl-2xl" : "bg-light-mid rounded-bl-2xl") : (!locked ? "bg-white rounded-br-2xl" : "bg-light-mid rounded-br-2xl")
                 } py-3 px-4 rounded-tl-2xl text-left rounded-tr-2xl min-w-[40px] max-w-[200px] lg:max-w-[400px] break-words whitespace-pre-wrap`}
               >
                 {content}

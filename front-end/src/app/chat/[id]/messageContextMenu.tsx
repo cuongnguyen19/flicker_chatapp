@@ -223,7 +223,7 @@ const messageContextMenu = ({ children, language, isSelfMessage, isLocked, messa
       <MessageInformationModal open={open} onCancel={() => setOpen(false)} conversationId={conversation.id} message={message} messageApi={messageApi} />
       <ConfirmDeleteMessageModal open={openDelete} onCancel={() => setOpenDelete(false)} conversation={conversation} message={message} messageApi={messageApi} />
       <ConfirmHideMessageModal open={openHide} onCancel={() => setOpenHide(false)} conversation={conversation} message={message} messageApi={messageApi} dispatch={dispatch} />
-      <ConfirmRevealMessageModal open={openReveal} onCancel={() => setOpenReveal(false)} conversation={conversation} message={message} messageApi={messageApi} dispatch={dispatch} isRevealedPass={revealedMessPassStatus} />
+      <ConfirmRevealMessageModal open={openReveal} onCancel={() => setOpenReveal(false)} conversation={conversation} message={message} messageApi={messageApi} isRevealedPass={revealedMessPassStatus} />
       <Dropdown menu={{ items, onClick: handleMenuClick }} trigger={["contextMenu"]} disabled={disabled}>
         {children}
       </Dropdown>

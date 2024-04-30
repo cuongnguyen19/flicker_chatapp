@@ -1,12 +1,10 @@
-import { User } from "@/redux/slices/user";
-import {AppDispatch, RootState } from "@/redux/store";
-import {Button, ConfigProvider, Form, Input, Modal} from "antd";
+import {RootState } from "@/redux/store";
+import {ConfigProvider, Form, Input, Modal} from "antd";
 import { MessageInstance } from "antd/es/message/interface";
 import React, {useContext, useState} from "react";
 import { connect } from "react-redux";
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import {Conversation, Message, deleteConversationAsyncAction} from "@/redux/slices/chat";
-import {useForm} from "antd/es/form/Form";
+import {Conversation, Message} from "@/redux/slices/chat";
 
 type Props = {
     open: boolean;
@@ -14,33 +12,11 @@ type Props = {
     messageApi: MessageInstance;
     conversation: Conversation;
     message: Message;
-    dispatch: AppDispatch;
 };
 
-type FieldType = {
-    password: string;
-    newPassword: string;
-    retypeNewPassword: string;
-};
-
-const revealedMessageModal = ({ conversation, message, open, onCancel, messageApi, dispatch }: Props) => {
+const revealedMessageModal = ({ conversation, message, open, onCancel, messageApi }: Props) => {
     const [loading, setLoading] = useState(false);
-    const [form] = useForm<FieldType>();
 
-    const onFinish = async (values: FieldType) => {
-        try {
-            setLoading(true);
-            dispatch(deleteConversationAsyncAction({ messageApi, conversationId: conversation.id, password: values.password}));
-            //onCancel();
-            form.resetFields();
-        } catch (e: any) {
-            messageApi.error(e.message);
-            form.resetFields();
-        } finally {
-            setLoading(false);
-            form.resetFields();
-        }
-    };
     return (
         <ConfigProvider
             theme={{
@@ -54,7 +30,6 @@ const revealedMessageModal = ({ conversation, message, open, onCancel, messageAp
                 open={open}
                 onCancel={() => {
                     onCancel();
-                    form.resetFields();
                 }}
                 closable={false}
                 footer={null}

@@ -24,7 +24,6 @@ type Props = {
     messageApi: MessageInstance;
     conversation: Conversation;
     message: Message;
-    dispatch: AppDispatch;
     isRevealedPass: boolean;
 };
 
@@ -34,7 +33,7 @@ type FieldType = {
     retypeNewPassword: string;
 };
 
-const confirmRevealMessageModal = ({ conversation, message, open, onCancel, messageApi, dispatch, isRevealedPass }: Props) => {
+const confirmRevealMessageModal = ({ conversation, message, open, onCancel, messageApi, isRevealedPass }: Props) => {
     const [loading, setLoading] = useState(false);
     const [form] = useForm<FieldType>();
     const [openUpdatePassword, setOpenUpdatePassword] = useState(false);
