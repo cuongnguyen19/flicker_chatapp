@@ -474,7 +474,7 @@ const getConversationsAsyncAction = createAsyncThunk(
             const lockedContent = await getMessageLockedContent(c.id, m.id);
             if(Object.isExtensible(m)) {
               m.locked = locked ? true : false;
-              m.lockedContent = lockedContent;
+              m.lockedContent = lockedContent ? lockedContent : "";
             }
           });
 

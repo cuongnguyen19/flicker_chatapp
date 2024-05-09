@@ -82,21 +82,21 @@ const changeRevealedMessagePassword = ({ open, onCancel, messageApi }: Props) =>
                         name="oldPassword"
                         rules={[{ required: true, message: "Please input your current password used for hidden conversation" }]}
                     >
-                        <Input placeholder="Type your current password used for hidden conversation" type="password"/>
+                        <Input placeholder="Type your current password used for revealing message" type="password"/>
                     </Form.Item>
 
                     <Form.Item<FieldType>
                         label="New Password"
                         name="newPassword"
-                        rules={[{ required: true, message: "Please input your new password used for hidden conversation" }]}
+                        rules={[{ required: true, message: "Please input your new password used for revealing message" }]}
                     >
-                        <Input placeholder="Type your new password used for hidden conversation" type="password"/>
+                        <Input placeholder="Type your new password used for revealing message" type="password"/>
                     </Form.Item>
 
                     <Form.Item<FieldType>
                         label="Retype New Password"
                         name="retypeNewPassword"
-                        rules={[{ required: true, message: "Please retype your new password used for hidden conversation" },
+                        rules={[{ required: true, message: "Please retype your new password used for revealing message" },
                             ({ getFieldValue }) => ({
                                 validator(_, value) {
                                     if (!value || getFieldValue('newPassword') === value) {

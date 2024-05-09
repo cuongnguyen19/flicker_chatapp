@@ -46,6 +46,7 @@ const confirmRevealMessageModal = ({ conversation, message, open, onCancel, mess
             const status = await checkRevealedMessPassMatch(values.password);
             if(status) {
                 setOpenRevealedMessage(true);
+                onCancel();
             }
             else {
                 messageApi.error("Wrong password");

@@ -1,0 +1,101 @@
+
+[
+java:S1854j"@Remove this useless assignment to local variable "conversation".(½õü¯úÿÿÿÿ
+L
+java:S1481j"1Remove this unused "conversation" local variable.(½õü¯úÿÿÿÿ
+[
+java:S1854~"@Remove this useless assignment to local variable "conversation".(½õü¯úÿÿÿÿ
+L
+java:S1481~"1Remove this unused "conversation" local variable.(½õü¯úÿÿÿÿ
+\
+java:S1854§"@Remove this useless assignment to local variable "conversation".(½õü¯úÿÿÿÿ
+M
+java:S1481§"1Remove this unused "conversation" local variable.(½õü¯úÿÿÿÿ
+T
+java:S1854Â"8Remove this useless assignment to local variable "user".(¿çûôşÿÿÿÿ
+E
+java:S1481Â")Remove this unused "user" local variable.(¿çûôşÿÿÿÿ
+B
+java:S1168Ï"+Return an empty collection instead of null.(¥¹ï
+T
+java:S1854ã"8Remove this useless assignment to local variable "user".(¿çûôşÿÿÿÿ
+E
+java:S1481ã")Remove this unused "user" local variable.(¿çûôşÿÿÿÿ
+T
+java:S1854õ"8Remove this useless assignment to local variable "user".(¿çûôşÿÿÿÿ
+E
+java:S1481õ")Remove this unused "user" local variable.(¿çûôşÿÿÿÿ
+B
+java:S1168ƒ"+Return an empty collection instead of null.(¥¹ï
+T
+java:S1854‡"8Remove this useless assignment to local variable "user".(¿çûôşÿÿÿÿ
+E
+java:S1481‡")Remove this unused "user" local variable.(¿çûôşÿÿÿÿ
+B
+java:S1168“"+Return an empty collection instead of null.(¥¹ï
+T
+java:S1854—"8Remove this useless assignment to local variable "user".(¿çûôşÿÿÿÿ
+E
+java:S1481—")Remove this unused "user" local variable.(¿çûôşÿÿÿÿ
+W	java:S125˜"<This block of commented-out lines of code should be removed.(ÒÁü‹ùÿÿÿÿ
+C
+java:S1125¦"'Remove the unnecessary boolean literal.(‹ÀËáøÿÿÿÿ
+T
+java:S1854¯"8Remove this useless assignment to local variable "user".(¿çûôşÿÿÿÿ
+E
+java:S1481¯")Remove this unused "user" local variable.(¿çûôşÿÿÿÿ
+T
+java:S1854µ"8Remove this useless assignment to local variable "user".(¿çûôşÿÿÿÿ
+E
+java:S1481µ")Remove this unused "user" local variable.(¿çûôşÿÿÿÿ
+k
+java:S11924"PDefine a constant instead of duplicating this literal "User not found" 15 times.(¿çûôşÿÿÿÿ
+m
+java:S1192k"RDefine a constant instead of duplicating this literal "Message with id: " 6 times.(Õˆèçıÿÿÿÿ
+…
+java:S1192k"jDefine a constant instead of duplicating this literal " not found in specified conversation id: " 7 times.(Õˆèçıÿÿÿÿ
+S
+java:S1155G">Use isEmpty() to check whether the collection is empty or not.(öÀü
+z
+java:S1488½"cImmediately return this expression instead of assigning it to the temporary variable "messageList".(úŸ÷´
+r
+java:S1488Ì"[Immediately return this expression instead of assigning it to the temporary variable "set".(ÜËã
+y
+java:S1488Ö"bImmediately return this expression instead of assigning it to the temporary variable "messageDTO".(¦ÇØš
+z
+java:S1488Ş"cImmediately return this expression instead of assigning it to the temporary variable "messageList".(úŸ÷´
+z
+java:S1488é"cImmediately return this expression instead of assigning it to the temporary variable "messageList".(úŸ÷´
+z
+java:S1488í"cImmediately return this expression instead of assigning it to the temporary variable "messageList".(úŸ÷´
+
+java:S1488û"cImmediately return this expression instead of assigning it to the temporary variable "messageList".(—Òóùÿÿÿÿ
+
+java:S1488ÿ"cImmediately return this expression instead of assigning it to the temporary variable "messageList".(—Òóùÿÿÿÿ
+
+java:S1488"cImmediately return this expression instead of assigning it to the temporary variable "messageList".(—Òóùÿÿÿÿ
+z
+java:S1488š"cImmediately return this expression instead of assigning it to the temporary variable "messageList".(úŸ÷´
+E
+java:S5411q"*Use the primitive boolean expression here.(Å™¥Ûıÿÿÿÿ
+F
+java:S5411‚"*Use the primitive boolean expression here.(¦…íóşÿÿÿÿ
+F
+java:S5411–"*Use the primitive boolean expression here.(Å™¥Ûıÿÿÿÿ
+A
+java:S5411®"*Use the primitive boolean expression here.(ùÚŞ«
+F
+java:S5411Ä"*Use the primitive boolean expression here.(÷ä¸ôùÿÿÿÿ
+F
+java:S5411å"*Use the primitive boolean expression here.(÷ä¸ôùÿÿÿÿ
+F
+java:S5411÷"*Use the primitive boolean expression here.(‚š­óùÿÿÿÿ
+F
+java:S5411‰"*Use the primitive boolean expression here.(‚š­óùÿÿÿÿ
+N
+java:S4973m"9Use the "equals" method if value comparison was intended.(ÿ‰§f
+O
+java:S4973’"9Use the "equals" method if value comparison was intended.(ÿ‰§f
+O
+java:S4973ª"9Use the "equals" method if value comparison was intended.(ÿ‰§f
+o	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(ªºå
