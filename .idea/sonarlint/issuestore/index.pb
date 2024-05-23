@@ -21,14 +21,8 @@ L
 ,front-end/src/shared/APIs/conversationAPI.ts,e/f/ef2c21803bf7c6cf087875eeab4e306a9ce8f762
 ï
 eback-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/repository/MessageRepository.java,6/f/6f0d4ffedf80a03891fd836b84333798d49ce83e
-b
-2front-end/src/app/chat/[id]/messageContextMenu.tsx,4/1/41c84d0881889783614c8542a0422e8d62fc895c
-[
-+front-end/src/app/chat/[id]/messageItem.tsx,7/5/751caa10d62d94e9e630b69e5bf93a21a97d5dad
 è
 _back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/service/MessageService.java,1/b/1bb0c6019e4f34d938d97370755e3bc210117cd6
-d
-4front-end/src/app/chat/[id]/revealedMessageModal.tsx,5/d/5de4485b89a4e69ed8ebb001d1b1968023ffd9ca
 U
 %front-end/src/shared/APIs/loginAPI.ts,4/2/428349d50dbccb971dc183c94d75bf3c83f0f7da
 ë

@@ -1,8 +1,15 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, {useContext, useEffect, useMemo, useState} from "react";
 import {Dropdown, MenuProps, Modal} from "antd";
 import { AppDispatch, RootState } from "@/redux/store";
 import { Language } from "@/redux/slices/language";
-import {TranslationOutlined, DeleteOutlined, InfoCircleOutlined, ExclamationCircleOutlined, EyeInvisibleOutlined} from "@ant-design/icons";
+import {
+  TranslationOutlined,
+  DeleteOutlined,
+  InfoCircleOutlined,
+  ExclamationCircleOutlined,
+  EyeInvisibleOutlined,
+  EyeTwoTone
+} from "@ant-design/icons";
 import { connect } from "react-redux";
 import { Conversation, Message, translateAsyncAction } from "@/redux/slices/chat";
 import { MessageInstance } from "antd/es/message/interface";
@@ -13,11 +20,14 @@ import ConfirmDeleteMessageModal from "./confirmDeleteMessageModal";
 import ConfirmHideMessageModal from "./confirmHideMessageModal";
 
 import {hideMessageAsyncAction} from "@/redux/slices/chat";
+import ConfirmRevealMessageModal from "@/app/chat/[id]/confirmRevealMessageModal";
+import {checkRevealedMessPassStatus} from "@/shared/APIs/userAPI";
 
 type Props = {
   children: React.ReactNode;
   language: Language[];
   isSelfMessage: boolean;
+  isLocked: boolean;
   message: Message;
   user: User;
   conversation: Conversation;
@@ -26,62 +36,141 @@ type Props = {
   dispatch: AppDispatch;
 };
 
-const messageContextMenu = ({ children, language, isSelfMessage, message, user, conversation, messageApi, disabled, dispatch }: Props) => {
+const messageContextMenu = ({ children, language, isSelfMessage, isLocked, message, user, conversation, messageApi, disabled, dispatch }: Props) => {
   const client = useContext(ClientContext);
   const [open, setOpen] = useState(false);
   const [openHide, setOpenHide] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
+  const [openReveal, setOpenReveal] = useState(false);
+  const [revealedMessPassStatus, setRevealedMessPassStatus] = useState(false);
 
   const items: MenuProps["items"] = useMemo(() => {
     if (isSelfMessage) {
-      return [
-        {
-          label: (
-            <span>
-              <InfoCircleOutlined /> Information
+      if(isLocked) {
+        return [
+          {
+            label: (
+                <span>
+              <InfoCircleOutlined/> Information
             </span>
-          ),
-          key: "info",
-        },
-        {
-          label: (
-              <span className="text-gray-500">
-              <EyeInvisibleOutlined /> Hide
+            ),
+            key: "info",
+          },
+          {
+            label: (
+                <span className="text-gray-500">
+              <EyeInvisibleOutlined/> Hide
             </span>
-          ),
-          key: "hide",
-        },
-      ];
+            ),
+            key: "hide",
+          },
+          {
+            label: (
+                <span className="text-blue-500">
+              <EyeTwoTone /> Reveal
+            </span>
+            ),
+            key: "reveal",
+          },
+        ];
+      }
+      else {
+        return [
+          {
+            label: (
+                <span>
+              <InfoCircleOutlined/> Information
+            </span>
+            ),
+            key: "info",
+          },
+          {
+            label: (
+                <span className="text-gray-500">
+              <EyeInvisibleOutlined/> Hide
+            </span>
+            ),
+            key: "hide",
+          },
+        ];
+      }
     } else {
-      return [
-        {
-          label: (
-            <span>
+      if(isLocked) {
+        return [
+          {
+            label: (
+                <span>
               <InfoCircleOutlined /> Information
             </span>
-          ),
-          key: "info",
-        },
-        {
-          label: (
-            <span>
+            ),
+            key: "info",
+          },
+          {
+            label: (
+                <span>
               <TranslationOutlined /> Translate
             </span>
-          ),
-          key: "translate",
-          children: language.length > 0 ? language.filter((l, i) => i > 0).map((l, i) => ({ key: i + 1, label: l.name + " (" + l.code + ")" })) : undefined,
-        },
-        {
-          label: (
-              <span className="text-gray-500">
+            ),
+            key: "translate",
+            children: language.length > 0 ? language.filter((l, i) => i > 0).map((l, i) => ({ key: i + 1, label: l.name + " (" + l.code + ")" })) : undefined,
+          },
+          {
+            label: (
+                <span className="text-gray-500">
               <EyeInvisibleOutlined /> Hide
             </span>
-          ),
-          key: "hide",
-        },
-      ];
+            ),
+            key: "hide",
+          },
+        ];
+      }
+      else {
+        return [
+          {
+            label: (
+                <span>
+              <InfoCircleOutlined/> Information
+            </span>
+            ),
+            key: "info",
+          },
+          {
+            label: (
+                <span>
+              <TranslationOutlined/> Translate
+            </span>
+            ),
+            key: "translate",
+            children: language.length > 0 ? language.filter((l, i) => i > 0).map((l, i) => ({
+              key: i + 1,
+              label: l.name + " (" + l.code + ")"
+            })) : undefined,
+          },
+          {
+            label: (
+                <span className="text-gray-500">
+              <EyeInvisibleOutlined/> Hide
+            </span>
+            ),
+            key: "hide",
+          },
+        ];
+      }
     }
   }, [language, isSelfMessage]);
+
+  useEffect(() => {
+    const fetchRevealedMessPassStatus = async () => {
+      try {
+        const response = await checkRevealedMessPassStatus();
+        setRevealedMessPassStatus(response); // Assuming the API returns the boolean value directly
+      } catch (error: any) {
+        messageApi.error(error.message);
+      }
+    };
+
+    fetchRevealedMessPassStatus();
+  }, [user]);
 
   const handleMenuClick: MenuProps["onClick"] = (info) => {
     if (info.key === "delete") {
@@ -96,6 +185,8 @@ const messageContextMenu = ({ children, language, isSelfMessage, message, user, 
     } else if (info.key === "hide") {
       setOpenHide(true);
       //dispatch(hideMessageAsyncAction({ messageApi, conversationId: conversation.id, messageId: message.id }));
+    } else if (info.key === "reveal") {
+      setOpenReveal(true);
     } else {
       dispatch(
         translateAsyncAction({
@@ -114,6 +205,7 @@ const messageContextMenu = ({ children, language, isSelfMessage, message, user, 
       <MessageInformationModal open={open} onCancel={() => setOpen(false)} conversationId={conversation.id} message={message} messageApi={messageApi} />
       <ConfirmDeleteMessageModal open={openDelete} onCancel={() => setOpenDelete(false)} conversation={conversation} message={message} messageApi={messageApi} />
       <ConfirmHideMessageModal open={openHide} onCancel={() => setOpenHide(false)} conversation={conversation} message={message} messageApi={messageApi} dispatch={dispatch} />
+      <ConfirmRevealMessageModal open={openReveal} onCancel={() => setOpenReveal(false)} conversation={conversation} message={message} messageApi={messageApi} isRevealedPass={revealedMessPassStatus} />
       <Dropdown menu={{ items, onClick: handleMenuClick }} trigger={["contextMenu"]} disabled={disabled}>
         {children}
       </Dropdown>
