@@ -1,0 +1,6 @@
+
+_
+java:S1874,"DRemove this use of "WebSecurityConfigurerAdapter"; it is deprecated.(Ã÷ ´ýÿÿÿÿ
+V	java:S125t"<This block of commented-out lines of code should be removed.(Û·Ò¦ûÿÿÿÿ
+Q	java:S125"<This block of commented-out lines of code should be removed.(€Ñ¡Ã
+n	java:S120"ZRename this package name to match the regular expression '^[a-z_]+(\.[a-z_][a-z0-9_]*)*$'.(‚ýÂ

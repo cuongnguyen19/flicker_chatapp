@@ -99,7 +99,7 @@ const Navbar = ({dispatch, messageApi}: Props) => {
                   setOpenArchive(true);
               }}
           >
-              <RestOutlined/>
+              <RestOutlined style={{ fontSize: '24px' }}/>
           </button>
         <Link href="/contact" className="my-4">
           <button

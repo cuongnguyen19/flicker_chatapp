@@ -29,3 +29,7 @@ b
 _back-end/Flicker/src/main/java/com/capstone/project/flicker/ChatApp/service/MessageService.java,1/b/1bb0c6019e4f34d938d97370755e3bc210117cd6
 d
 4front-end/src/app/chat/[id]/revealedMessageModal.tsx,5/d/5de4485b89a4e69ed8ebb001d1b1968023ffd9ca
+U
+%front-end/src/shared/APIs/loginAPI.ts,4/2/428349d50dbccb971dc183c94d75bf3c83f0f7da
+‘
+aback-end/Flicker/src/main/java/com/capstone/project/flicker/AuthApp/config/WebSecurityConfig.java,6/d/6d7259cb98a1b1b88ee269c6402e08229bb24c69
