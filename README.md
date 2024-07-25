@@ -1,6 +1,6 @@
 
 
-# ELEC5020 ELEC5021 Capstone Project A Capstone Project B
+# Flicker Chat App with Automatic Translation and Transcription and Advanced Hiding/Archiving Messages, Conversations Capabilities
 
  `Flicker` - a translation messaging webapp.
 
